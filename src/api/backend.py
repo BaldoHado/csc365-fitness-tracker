@@ -9,4 +9,4 @@ router = APIRouter(
 
 @router.get("/")
 def get_workouts(): 
-    return data_utils.read_data(".\src\data\exercises.xlsx").to_series().to_list()
+    return data_utils.read_data(".\src\data\exercises.xlsx")
