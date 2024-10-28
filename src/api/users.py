@@ -13,9 +13,6 @@ router = APIRouter(
 # adds new user to data base 
 @router.post("/{first_name}/{last_name}")
 def post_user(first_name, last_name):
-    # with db.engine.begin() as connection:
-    #     connection.execute(sqlalchemy.text("UPDATE users SET first_name"))
-
     with db.engine.begin() as connection:
             connection.execute(sqlalchemy.text("UPDATE users"
                                                 "SET first_name = :first_name, "
@@ -30,8 +27,9 @@ def post_user(first_name, last_name):
         "last_name": last_name
     }
 
-# @router.post("/")
-# def post_user():
+# @router.post("/{fir}")
+# def get_user(user_list: list):
+
 #     # with db.engine.begin() as connection:
 #     #     connection.execute(sqlalchemy.text("UPDATE users SET first_name"))
        
