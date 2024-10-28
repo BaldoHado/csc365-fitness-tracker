@@ -4,7 +4,9 @@ CREATE TABLE muscle_groups (
 );
 
 CREATE TABLE users (
-    user_id bigserial NOT NULL PRIMARY KEY
+    user_id bigserial NOT NULL PRIMARY KEY,
+    first_name text NOT NULL,
+    last_name text NOT NULL
 );
 
 CREATE TABLE workout_item (
@@ -24,5 +26,7 @@ CREATE TABLE user_workout_item (
 
 CREATE TABLE workout (
     workout_id bigserial NOT NULL PRIMARY KEY,
-    workout_name text NOT NULL
+    workout_name text NOT NULL,
+    muscle_group text NOT NULL,
+    equipment text NOT NULL
 );
