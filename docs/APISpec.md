@@ -8,7 +8,7 @@ Response:
 [
   {
     "name": str,
-    "muscle_groups": str[],
+    "muscle_groups": str,
   }
 ]
 ```
