@@ -8,5 +8,5 @@ router = APIRouter(
 )
 
 @router.get("/")
-def get_workouts(): 
-    return data_utils.read_data(".\src\data\exercises.xlsx")
+def get_workouts():
+    return data_utils.read_data("./src/data/exercises.xlsx")
