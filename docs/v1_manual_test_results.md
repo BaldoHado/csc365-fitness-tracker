@@ -5,11 +5,62 @@ As a college freshman, Chris is trying to break into weightlifting so he uses ou
 
   
 # Testing results
-<Repeated for each step of the workflow>
-1. The curl statement called. You can find this in the /docs site for your 
-API under each endpoint. For example, for my site the /catalogs/ endpoint 
-curl call looks like:
-curl -X 'GET' \
-  'https://centralcoastcauldrons.vercel.app/catalog/' \
-  -H 'accept: application/json'
-2. The response you received in executing the curl statement.
+
+1. Create a New User - /users (POST)
+
+Curl Command:
+```bash
+curl -X 'POST' 'https://csc365-fitness-tracker-1.onrender.com/users' -H 'Content-Type: application/json' -d '{"first_name": "Chris", "last_name": "Smith"}'
+```
+Response:
+```json
+{ "user_id": 1 }
+```
+2. Get Workouts - /workouts (GET)
+
+Curl Command:
+```bash
+curl -X 'GET' 'https://csc365-fitness-tracker-1.onrender.com/workouts' -H 'accept: application/json'
+```
+Response:
+```json
+  { "name": "Squats", "muscle_groups": ["legs"] },
+  ...
+
+3. Add Workouts for User - /users/{user_id}/workouts (POST)
+
+Curl Command:
+```bash
+curl -X 'POST' 'https://csc365-fitness-tracker-1.onrender.com/users/1/workouts' -H 'Content-Type: application/json' -d '{
+  "name": "Bench Press",
+  "sets": 4,
+  "reps": [10, 8, 8, 6],
+  "weight": [80, 85, 90, 95],
+  "rest_time": [60, 60, 90, 90],
+  "one_rep_max_weight": 100
+}'
+```
+Response:
+```json
+{ "status": "success", "message": "Workout added for user." }
+```
+
+4. Get Workout Distribution Analysis - /analysis/{user_id}/distribution (GET)
+
+Curl Command:
+```bash
+curl -X 'GET' 'https://csc365-fitness-tracker-1.onrender.com/analysis/1/distribution' -H 'accept: application/json'
+```
+Response:
+```json
+{
+  "result": {
+    "chest": 60,
+    "back": 20,
+    "legs": 20,
+    "arms": 0
+  }
+}
+
+```
+
