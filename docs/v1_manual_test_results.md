@@ -25,20 +25,19 @@ curl -X 'GET' 'https://csc365-fitness-tracker-1.onrender.com/workouts' -H 'accep
 Response:
 ```json
   { "name": "Squats", "muscle_groups": ["legs"] },
-  ...
+  ```
 
 3. Add Workouts for User - /users/{user_id}/workouts (POST)
 
 Curl Command:
 ```bash
-curl -X 'POST' 'https://csc365-fitness-tracker-1.onrender.com/users/1/workouts' -H 'Content-Type: application/json' -d '{
+curl -X 'POST' 'https://csc365-fitness-tracker-1.onrender.com/users/1/workouts' -H 'Content-Type: application/json' -d '
   "name": "Bench Press",
   "sets": 4,
   "reps": [10, 8, 8, 6],
   "weight": [80, 85, 90, 95],
   "rest_time": [60, 60, 90, 90],
-  "one_rep_max_weight": 100
-}'
+  "one_rep_max_weight": 100    
 ```
 Response:
 ```json
