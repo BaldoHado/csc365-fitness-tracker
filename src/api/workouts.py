@@ -12,6 +12,15 @@ router = APIRouter(
 
 @router.get("/")
 def get_workouts():
-     with db.engine.begin() as connection:
-        result = connection.execute(sqlalchemy.text("SELECT * FROM global_inventory"))
-        return data_utils.read_data("./src/data/exercises.xlsx")
+
+    res = []
+    with db.engine.begin() as connection:
+        workouts = connection.execute(sqlalchemy.text("SELECT workout_name, muscle_group FROM workout"))
+
+        for i in range(len(workouts)):
+            res.append({
+                "name": workouts[i][0],
+                "muscle_groups": workouts[i][1]
+            },)
+
+        return res
