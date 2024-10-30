@@ -10,6 +10,7 @@ router = APIRouter(
     dependencies=[Depends(auth.get_api_key)],
 )
 
+
 @router.get("/")
 def get_workouts():
 
@@ -18,10 +19,9 @@ def get_workouts():
         workouts = connection.execute(sqlalchemy.text("SELECT workout_name, muscle_group FROM workout")).fetchall()
 
         for i in range(len(workouts)):
-            res.append({
-                "name": workouts[i][0],
-                "muscle_groups": workouts[i][1]
-            },)
+            res.append(
+                {"name": workouts[i][0], "muscle_groups": workouts[i][1]},
+            )
 
         return res
     

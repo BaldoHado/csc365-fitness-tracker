@@ -80,6 +80,7 @@ Request:
     "reps": int[],
     "weight": int[],
     "rest_time": int[],
+    "one_rep_max_weight": int
   }
 ]
 ```
