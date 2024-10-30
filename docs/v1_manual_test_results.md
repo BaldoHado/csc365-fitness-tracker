@@ -1,10 +1,10 @@
-# Example workflow
+# Example Workflow 1
 Example Flow 1: 
 
 As a college freshman, Chris is trying to break into weightlifting so he uses our app to track his workouts and receive insights on his progression. First, he creates an account through calling `POST /users/`. He gets a list of the workouts on the app by calling `GET /workouts/` and then adds the workouts he's been trying out by calling `POST /users/{user_id}/workouts/`. After documenting his workouts, he's curious on how to improve his routine, so he calls `GET /analysis/{user_id}/distribution/`. The endpoint reveals that much of his workout is focused on chest exercises, with only 2 workouts targeting his lower-body. Chris adjusts his workouts to get a more balanced distribution and then heads to the gym to attempt his new routine.
 
   
-# Testing results
+# Testing Results
 
 1. Create a New User - /users (POST)
 
@@ -24,7 +24,9 @@ curl -X 'GET' 'https://csc365-fitness-tracker-1.onrender.com/workouts' -H 'accep
 ```
 Response:
 ```json
-  { "name": "Squats", "muscle_groups": ["legs"] },
+  { "name": "str", 
+  "muscle_groups": ["str"] 
+  },
   ```
 
 3. Add Workouts for User - /users/{user_id}/workouts (POST)
@@ -41,7 +43,8 @@ curl -X 'POST' 'https://csc365-fitness-tracker-1.onrender.com/users/1/workouts' 
 ```
 Response:
 ```json
-{ "status": "success", "message": "Workout added for user." }
+{ "status": "success", 
+"message": "Workout added for user." }
 ```
 
 4. Get Workout Distribution Analysis - /analysis/{user_id}/distribution (GET)
@@ -62,4 +65,5 @@ Response:
 }
 
 ```
+
 
