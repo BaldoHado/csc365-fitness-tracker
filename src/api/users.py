@@ -28,7 +28,8 @@ def post_user(first_name, last_name):
 
 # @router.post("/")
 # def post_workouts(user_list: list):
-
+#  select workouts associated with user id from workout_item 
+# output all of those workouts 
 #     # with db.engine.begin() as connection:
 #     #     connection.execute(sqlalchemy.text("UPDATE users SET first_name"))
        
