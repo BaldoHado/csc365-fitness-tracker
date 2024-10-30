@@ -5,6 +5,7 @@ FitnessGoal = Literal["strength", "muscle_growth", "endurance"]
 
 AnalysisTip = Literal["too_much", "just_right", "too_low"]
 
+
 @dataclass
 class WorkoutItem:
     workout_id: str
@@ -13,3 +14,8 @@ class WorkoutItem:
     weight: List[int]
     rest_time: List[int]
     one_rep_max: int
+
+
+@dataclass
+class NamedWorkoutItem(WorkoutItem):
+    workout_name: str
