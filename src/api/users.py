@@ -3,6 +3,7 @@ from src.api import auth
 from src.utils import data_utils
 import sqlalchemy
 from src import database as db
+from workouts import find_workout
 
 router = APIRouter(
     prefix="/users",
@@ -10,7 +11,7 @@ router = APIRouter(
     dependencies=[Depends(auth.get_api_key)],
 )
 
-@router.post("/{first_name}/{last_name}")
+@router.post("/users/{first_name}/{last_name}")
 def post_user(first_name: str, last_name: str):
     with db.engine.begin() as connection:
         connection.execute(
@@ -24,8 +25,11 @@ def post_user(first_name: str, last_name: str):
     return {"first_name": first_name, "last_name": last_name}
 
 # adds a workout to the users id 
-@router.post("/")
-def post_workouts(user_list: list):
+@router.post("/users/{user_id}/workouts")
+def post_workouts(workout_name: str):
+    workout = find_workout(workout_name)
+    
+
 #  select workouts associated with user id from workout_item 
 # output all of those workouts 
     # with db.engine.begin() as connection:
