@@ -47,3 +47,21 @@ def add_custom_workout(workout_name: str, muscle_group: str, equipment: str):
             "equipment": equipment
         }
     ]
+
+@router.get("/search/{workout_name}")
+def find_workout(workout_name: str):
+    with db.engine.begin() as conn:
+        query = conn.execute(
+            sqlalchemy.text(
+                "SELECT workout_id, workout_name, muscle_group, equipment FROM workout WHERE LOWER(workout_name) = LOWER(:workout_name)"
+            ),
+            {"workout_name": workout_name},
+        ).first()
+        if not query:
+            return {}
+        return {
+            "workout_id": query[0],
+            "workout_name": query[1],
+            "muscle_group": query[2],
+            "equipment": query[3],
+        }
