@@ -10,21 +10,19 @@ router = APIRouter(
     dependencies=[Depends(auth.get_api_key)],
 )
 
-# adds new user to data base 
 @router.post("/{first_name}/{last_name}")
-def post_user(first_name, last_name):
+def post_user(first_name: str, last_name: str):
     with db.engine.begin() as connection:
-            connection.execute(sqlalchemy.text("INSERT INTO users (first_name, last_name) "
-                                                "VALUES (:first_name, :last_name)"),
-                                                {
-                                                      "first_name": first_name,
-                                                      "last_name": last_name
-                                                })
+        connection.execute(
+            sqlalchemy.text(
+                "INSERT INTO users (first_name, last_name) "
+                "VALUES (:first_name, :last_name)"
+            ),
+            {"first_name": first_name, "last_name": last_name},
+        )
 
-    return {
-        "first_name": first_name,
-        "last_name": last_name
-    }
+    return {"first_name": first_name, "last_name": last_name}
+
 
 # @router.post("/")
 # def post_workouts(user_list: list):
@@ -32,5 +30,5 @@ def post_user(first_name, last_name):
 # output all of those workouts 
 #     # with db.engine.begin() as connection:
 #     #     connection.execute(sqlalchemy.text("UPDATE users SET first_name"))
-       
+
 #     return "OK"
