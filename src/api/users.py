@@ -3,7 +3,7 @@ from src.api import auth
 from src.utils import data_utils
 import sqlalchemy
 from src import database as db
-from workouts import find_workout
+import src.api.workouts as workouts
 
 router = APIRouter(
     prefix="/users",
@@ -24,15 +24,7 @@ def post_user(first_name: str, last_name: str):
 
     return {"first_name": first_name, "last_name": last_name}
 
-# adds a workout to the users id 
-@router.post("/users/{user_id}/workouts")
-def post_workouts(workout_name: str):
-    workout = find_workout(workout_name)
-    
-
-#  select workouts associated with user id from workout_item 
-# output all of those workouts 
-    # with db.engine.begin() as connection:
-    #     connection.execute(sqlalchemy.text("UPDATE users SET first_name"))
-
-    return "OK"
+@router.post("/{user_id}/workouts/{workout_name}/{sets}/{reps}/{weight}/{rest_time}/{one_rep_max}")
+def post_workout_to_user(user_id: str, workout_name: str, sets: int, reps: int, weight: int, rest_time: int, one_rep_max: int):
+    # workouts.find_workout()
+    pass
