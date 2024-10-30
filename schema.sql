@@ -11,6 +11,7 @@ CREATE TABLE user_workout_item (
     reps int NOT NULL,
     weight int NOT NULL,
     rest_time int NOT NULL,
+    one_rep_max int NOT NULL,
     PRIMARY KEY (user_id, workout_id) 
 );
 
