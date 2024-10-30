@@ -21,7 +21,8 @@ Request:
 [
   {
     "name": str, # Must be unique
-    "muscle_groups": str[],
+    "muscle_groups": str,
+    "equipment": str
   }
 ]
 ```
