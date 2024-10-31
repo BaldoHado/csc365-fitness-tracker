@@ -49,13 +49,28 @@ def get_workout_tips(user_id: str, fitness_goal: str):
         )
     return response
 
-@router.get("/{user_id}/distribution/")
-def get_workout_distribution(user_id: str):
-    # Internal logic to associate user_id with workout_item -> workout -> muscle_group
-    workouts = ["forearms", "middle back", "lower back"]
-    workouts = [workout.lower() for workout in workouts]
-    distrib = Counter(workouts)
-    workout_sum = sum(distrib.values())
-    for workout_name, count in distrib.items():
-        distrib[workout_name] = round(count / workout_sum, 2)
-    return distrib
+
+@router.post("/{user_id}/distribution/")
+def workout_distribution(user_id: str):
+    with db.engine.begin() as conn:
+        query = conn.execute(
+            sqlalchemy.text(
+                """
+                WITH TotalWorkouts AS (
+                    SELECT COUNT(workout_id) AS workout_count
+                    FROM user_workout_item
+                    WHERE user_id = :id
+                )
+                SELECT workout.workout_name, ROUND(COUNT(workout.muscle_group)::DECIMAL / (SELECT workout_count FROM TotalWorkouts), 4) AS percentage
+                FROM user_workout_item
+                JOIN workout ON user_workout_item.workout_id = workout.workout_id
+                WHERE user_id = :user_id
+                GROUP BY workout.workout_name
+                """
+            ),
+            {"id": user_id, "user_id": user_id},
+        ).fetchall()
+        if not query:
+            return []
+        query = [{name: val} for name, val in query]
+    return query
