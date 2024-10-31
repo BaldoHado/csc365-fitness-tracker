@@ -4,7 +4,7 @@ from src.utils import data_utils
 import sqlalchemy
 from src import database as db
 import src.api.workouts as workouts
-import utils.utils as utils
+import src.utils.utils as utils
 
 router = APIRouter(
     prefix="/users",
@@ -13,7 +13,7 @@ router = APIRouter(
 )
 
 
-@router.post("/users/{first_name}/{last_name}")
+@router.post("/{first_name}/{last_name}")
 def post_user(first_name: str, last_name: str):
     with db.engine.begin() as connection:
         connection.execute(
@@ -54,6 +54,35 @@ def post_workout_to_user(user_id: str, workout_name: str, sets: int, reps: int, 
         "rest_time": rest_time,
         "one_rep_max": one_rep_max,
     }
-    
 
-    
+@router.get("/{user_id}/workouts")
+def get_workouts_from_user(user_id: str):
+    with db.engine.begin() as connection:
+        workouts_db = connection.execute(
+            sqlalchemy.text(
+                "SELECT workout.workout_name, "
+                        "u.sets, " 
+                        "u.reps, "
+                        "u.weight, "
+                        "u.rest_time, " 
+                        "u.one_rep_max "
+                "FROM user_workout_item u "
+                "JOIN workout on workout.workout_id = u.workout_id "
+                "WHERE user_id = :user_id"    
+            ),
+            {"user_id": user_id},
+        ).fetchall()
+        
+    workouts_list = [
+        {
+            "workout_name": row.workout_name,
+            "sets": row.sets,
+            "reps": row.reps,
+            "weight": row.weight,
+            "rest_time": row.rest_time,
+            "one_rep_max": row.one_rep_max
+        }
+        for row in workouts_db
+    ]
+
+    return workouts_list
