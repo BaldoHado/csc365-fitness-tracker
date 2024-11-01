@@ -44,7 +44,7 @@ def get_workout_from_muscle_group(muscle_group: str):
 
 
 @router.post("/workouts/{workout_name}/{muscle_group}/{equipment}")
-def add_custom_workout(workout_name: str, muscle_group: str, equipment: str):
+def post_custom_workout(workout_name: str, muscle_group: str, equipment: str):
     with db.engine.begin() as connection:
         workouts = connection.execute(
             sqlalchemy.text("SELECT workout_name FROM workout")

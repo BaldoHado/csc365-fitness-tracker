@@ -21,5 +21,5 @@ class WorkoutItem(BaseWorkoutItem):
 
 
 @dataclass
-class NamedWorkoutItem(WorkoutItem):
+class NamedWorkoutItem(BaseWorkoutItem):
     workout_name: str

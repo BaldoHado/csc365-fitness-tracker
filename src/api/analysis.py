@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from src.api import auth
+from src.api import auth, users
 from src.utils import data_utils
 import sqlalchemy
 from src import database as db
@@ -16,37 +16,19 @@ router = APIRouter(
 
 @router.get("/{user_id}/tips/{fitness_goal}")
 def get_workout_tips(user_id: str, fitness_goal: str):
-    # Internal logic to fetch workout_items from a given user_id
-    workout_items = [
-        utils.WorkoutItem(
-            "1", 4, [8, 7, 5, 4], [95, 145, 165, 170], [60, 120, 180, 240], 185
-        ),
-        utils.WorkoutItem(
-            "1", 3, [5, 5, 8, 12], [45, 95, 145, 125], [0, 30, 60, 60], 145
-        ),
-    ]
-
-    response = []
+    workout_items = users.get_workouts_from_user(user_id)
+    response = {}
     for workout_item in workout_items:
-        response.append(
-            {
-                "sets": analysis_utils.analyze_sets(workout_item.sets, fitness_goal),
-                "reps": [
-                    analysis_utils.analyze_reps(rep, fitness_goal)
-                    for rep in workout_item.reps
-                ],
-                "weight": [
-                    analysis_utils.analyze_weight(
-                        workout_item.one_rep_max, weight, fitness_goal
-                    )
-                    for weight in workout_item.weight
-                ],
-                "rest_time": [
-                    analysis_utils.analyze_rest_time(time, fitness_goal)
-                    for time in workout_item.rest_time
-                ],
-            }
-        )
+        response[workout_item.workout_name] = {
+            "sets": analysis_utils.analyze_sets(workout_item.sets, fitness_goal),
+            "reps": analysis_utils.analyze_reps(workout_item.reps, fitness_goal),
+            "weight": analysis_utils.analyze_weight(
+                workout_item.one_rep_max, workout_item.weight, fitness_goal
+            ),
+            "rest_time": analysis_utils.analyze_rest_time(
+                workout_item.rest_time, fitness_goal
+            ),
+        }
     return response
 
 
