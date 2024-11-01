@@ -14,25 +14,25 @@ curl -X 'POST' 'https://csc365-fitness-tracker-1.onrender.com/workouts/{user_id}
 ```
 Response:
 ```json
-{ "user_id": 1 }
+{ " 'workouts': str[]," }
 ```
-2. Get Workouts for Back - /workouts/Weighted_Lunges (GET)
+
+2. Get Workouts for Back - /workouts/search/muscle_groups=back (GET)
 
 Curl Command:
 ```bash
-curl -X 'POST' 'https://csc365-fitness-tracker-1.onrender.com/workouts/Weighted_Lunges' -H 'Content-Type: application/json' 
+curl -X 'POST' 'https://csc365-fitness-tracker-1.onrender.com/workouts/search/muscle_groups=back' -H 'Content-Type: application/json' 
 ```
 Response:
 ```json
-  { "name": "str", 
-  "muscle_groups": ["Back"] },
+  { "workout_name": "str" },
   ```
 
-3. Add a Workout to the App - /users/{user_id}/workouts (POST)
+3. Add Weighted Lunges to the App Workouts - /users/{user_id}/workouts (POST)
 
 Curl Command:
 ```bash
-curl -X 'POST' 'https://csc365-fitness-tracker-1.onrender.com/workouts' -H 'Content-Type: application/json' -d '{"name":"Weighted Lunges" , muscle_groups:"Legs"}' 
+curl -X 'POST' 'https://csc365-fitness-tracker-1.onrender.com/workouts' -H 'Content-Type: application/json' -d '{"name":"Weighted Lunges" , muscle_groups:"Legs" equipment:"None"}' 
 ```
 Response:
 ```json
@@ -40,17 +40,17 @@ Response:
 "message": "Workout added." }
 ```
 
-4. Add Workouts to User  - /users/{user_id}/workouts (POST)
+4. Add Weighted Lunges to User Workouts - /users/{user_id}/workouts (POST)
 
 Curl Command:
 ```bash
-curl -X 'POST' 'https://csc365-fitness-tracker-1.onrender.com/users/1/workouts' -H 'Content-Type: application/json' -d '
-  "name": "Bench Press",
-  "sets": 4,
-  "reps": [10, 8, 8, 6],
-  "weight": [80, 85, 90, 95],
+curl -X 'POST' 'https://csc365-fitness-tracker-1.onrender.com/users/{usre_id}/workouts' -H 'Content-Type: application/json' -d '
+  "name": "Weighted Lunges",
+  "sets": 2,
+  "reps": [10, 8, 10, 10],
+  "weight": [30, 30, 25, 20],
   "rest_time": [60, 60, 90, 90],
-  "one_rep_max_weight": 100    
+  "one_rep_max_weight": 70    
 ```
 Response:
 ```json
@@ -62,7 +62,7 @@ Response:
 # Example Workflow 3
 Example Flow 3: 
 
-Chris introduces his friend Ozcar to the app, and Ozcar is excited to start tracking his workouts with his own personalized data. Ozcar begins by creating an account, calling `POST /users` and providing his name details, which generates a unique user ID for him. Eager to start his fitness journey, Ozcar explores the available workouts by calling `GET /workouts`, which returns a list of exercises along with the muscle groups they target. After browsing through the options, Ozcar decides to start with squats. He calls `POST /users/{user_id}/workouts` to add "Squats" to his workout routine.. With his account set up and his first workout documented, Ozcar is ready to use the app to track his progress and achieve his fitness goals.
+ Chris introduces his friend Ozcar to the app, and Ozcar is excited to start tracking his workouts with his own personalized data. Ozcar begins by creating an account, calling `POST /users` to create an account. Eager to start his fitness journey, Ozcar explores the available workouts by calling `GET /workouts`, which returns a list of exercises along with the muscle groups they target. After browsing through the options, Ozcar adds his workouts through `POST /users/{user_id}/workouts`. He's curious on whether his routine is good, so he calls `GET /{user_id}/tips/{fitness_goal}` with his fitness goal being pure strength. The endpoint returns results indicating that he does too many reps per set, and suggests that he increases the weight and lowers the amount of reps. Ozcar alters his routine using, optimizing his workouts to build strength.
 
   
 # Testing Results
@@ -90,7 +90,7 @@ Response:
   },
   ```
 
- 3. Add Workouts for User - /users/{user_id}/workouts (POST)
+ 3. Add Workouts for Oscar - /users/{user_id}/workouts (POST)
 
 Curl Command:
 ```bash
@@ -100,7 +100,7 @@ curl -X 'POST' 'https://csc365-fitness-tracker-1.onrender.com/users/1/workouts' 
   "reps": [10, 8, 8, 6],
   "weight": [80, 85, 90, 95],
   "rest_time": [60, 60, 90, 90],
-  "one_rep_max_weight": 100    
+  "one_rep_max_weight": 100   
 ```
 Response:
 ```json
@@ -108,3 +108,30 @@ Response:
 "message": "Workout added for user." }
 ```
 
+4. Get User's Fitness Goal - /{user_id}/tips/{fitness_goal} (GET)
+
+Curl Command:
+```bash
+curl -X 'POST' 'https://csc365-fitness-tracker-1.onrender.com/{user_id}/tips/{fitness_goal}' -H 'Content-Type: application/json' 
+```
+Response:
+```json
+{
+    "sets": {
+        "analysis": Literal["low", "just_right", "excessive"],
+        "target": int,
+      },
+    "reps": {
+        "analysis": Literal["low", "just_right", "excessive"],
+        "target": int,
+      },
+    "weight": {
+        "analysis": Literal["low", "just_right", "excessive"],
+        "target": int,
+      },
+    "rest_time": {
+        "analysis": Literal["low", "just_right", "excessive"],
+        "target": int,
+      }
+  }
+``` 
