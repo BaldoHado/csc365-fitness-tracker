@@ -38,7 +38,9 @@ def post_workout_to_user(
     rest_time: int,
     one_rep_max: int,
 ):
-    workout_id = workouts.find_workout(workout_name)["workout_id"]
+    workout_id = workouts.find_workout(workout_name).get("workout_id", None)
+    if not workout_id:
+        return {}
     with db.engine.begin() as connection:
         connection.execute(
             sqlalchemy.text(

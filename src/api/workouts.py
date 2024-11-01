@@ -13,19 +13,19 @@ router = APIRouter(
 
 @router.get("/")
 def get_workouts():
-
-    res = []
     with db.engine.begin() as connection:
         workouts = connection.execute(
             sqlalchemy.text("SELECT workout_name, muscle_group FROM workout")
         ).fetchall()
 
-        for i in range(len(workouts)):
-            res.append(
-                {"name": workouts[i][0], "muscle_groups": workouts[i][1]},
-            )
-
-        return res
+        return (
+            [
+                {"name": name, "muscle_group": muscle_group}
+                for name, muscle_group in workouts
+            ]
+            if workouts
+            else []
+        )
 
 
 @router.get("/{muscle_group}")
