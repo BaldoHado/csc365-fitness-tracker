@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from src.api import auth
 from src.utils import data_utils
 import sqlalchemy
@@ -40,7 +40,7 @@ def update_user_workout(
 ):
     workout_id = workouts.find_workout(workout_name).get("workout_id", None)
     if not workout_id:
-        return "Err: Invalid Workout Name"
+        raise HTTPException(status_code=404, detail="Workout not found")
 
     update_data = {}
     if sets is not None:
@@ -55,7 +55,7 @@ def update_user_workout(
         update_data["one_rep_max"] = one_rep_max
 
     if len(update_data.keys()) == 0:
-        return "Err: No update data provided"
+        raise HTTPException(status_code=400, detail="No update values provided")
 
     set_clause = ", ".join([f"{key} = :{key}" for key in update_data.keys()])
     update_data["user_id"] = user_id
@@ -83,7 +83,7 @@ def post_workout_to_user(
 ):
     workout_id = workouts.find_workout(workout_name).get("workout_id", None)
     if not workout_id:
-        return {}
+        raise HTTPException(status_code=404, detail="Workout not found")
     with db.engine.begin() as connection:
         connection.execute(
             sqlalchemy.text(
