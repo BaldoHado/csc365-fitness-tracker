@@ -88,30 +88,42 @@ Response:
 
 Curl Command:
 ```bash
-curl -X 'POST' 'https://csc365-fitness-tracker-1.onrender.com/workouts' -H 'Content-Type: application/json' -d '{"name":"Weighted Lunges" , muscle_groups:"Legs" equipment:"None"}' 
+curl -X 'POST' \
+  'https://csc365-fitness-tracker-1.onrender.com/workouts/workouts/Weighted%20Lunges/Hamstrings/Dumbbell' \
+  -H 'accept: application/json' \
+  -H 'access_token: fitnesstracker' \
+  -d ''
 ```
 Response:
 ```json
-{ "status": "success", 
-"message": "Workout added." }
+{
+    "name": "Weighted Lunges",
+    "muscle_group": "Hamstrings",
+    "equipment": "Dumbbell"
+  }
 ```
 
 4. Add Weighted Lunges to User Workouts - /users/{user_id}/workouts (POST)
 
 Curl Command:
 ```bash
-curl -X 'POST' 'https://csc365-fitness-tracker-1.onrender.com/users/{usre_id}/workouts' -H 'Content-Type: application/json' -d '
-  "name": "Weighted Lunges",
-  "sets": 2,
-  "reps": [10, 8, 10, 10],
-  "weight": [30, 30, 25, 20],
-  "rest_time": [60, 60, 90, 90],
-  "one_rep_max_weight": 70    
+curl -X 'POST' \
+  'https://csc365-fitness-tracker-1.onrender.com/users/7/workouts/Weighted%20Lunges?sets=2&reps=10&weight=35&rest_time=60&one_rep_max=80' \
+  -H 'accept: application/json' \
+  -H 'access_token: fitnesstracker' \
+  -d ''
 ```
 Response:
 ```json
-{ "status": "success", 
-"message": "Workout added for user." }
+{
+  "user_id": "7",
+  "workout_id": 483,
+  "sets": 2,
+  "reps": 10,
+  "weight": 35,
+  "rest_time": 60,
+  "one_rep_max": 80
+}
 ```
 
 
