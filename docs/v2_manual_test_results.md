@@ -168,7 +168,8 @@ Response:
   { 
     "name": "str", 
   "muscle_groups": ["str"] 
-  EX:
+
+  Example:
   
     "name": "Single-Leg Press",
     "muscle_group": "Quadriceps"
