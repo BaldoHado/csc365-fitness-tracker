@@ -10,22 +10,78 @@ After using the app for a few weeks, Chris decides to try some new exercises. To
 
 Curl Command:
 ```bash
-curl -X 'POST' 'https://csc365-fitness-tracker-1.onrender.com/workouts/{user_id}' -H 'Content-Type: application/json' 
-```
+curl -X 'GET' \
+  'https://csc365-fitness-tracker-1.onrender.com/users/7/workouts' \
+  -H 'accept: application/json' \
+  -H 'access_token: fitnesstracker'
+  ```
 Response:
 ```json
-{ " 'workouts': str[]," }
+{
+    "sets": 2,
+    "reps": 10,
+    "weight": 20,
+    "rest_time": 60,
+    "one_rep_max": 30,
+    "workout_name": "Palms-up wrist curl over bench"
+  }
 ```
 
 2. Get Workouts for Back - /workouts/search/muscle_groups=back (GET)
 
 Curl Command:
 ```bash
-curl -X 'POST' 'https://csc365-fitness-tracker-1.onrender.com/workouts/search/muscle_groups=back' -H 'Content-Type: application/json' 
+curl -X 'GET' \
+  'https://csc365-fitness-tracker-1.onrender.com/workouts/Lower%20Back' \
+  -H 'accept: application/json' \
+  -H 'access_token: fitnesstracker'
 ```
 Response:
 ```json
-  { "workout_name": "str" },
+  {
+    "name": "Atlas Stones",
+    "muscle_group": "Lower Back"
+  },
+  {
+    "name": "Barbell deficit deadlift",
+    "muscle_group": "Lower Back"
+  },
+  {
+    "name": "Back extension",
+    "muscle_group": "Lower Back"
+  },
+  {
+    "name": "Back extension",
+    "muscle_group": "Lower Back"
+  },
+  {
+    "name": "Axle Deadlift",
+    "muscle_group": "Lower Back"
+  },
+  {
+    "name": "Hyperextensions With No Hyperextension Bench",
+    "muscle_group": "Lower Back"
+  },
+  {
+    "name": "Deadlift with Bands",
+    "muscle_group": "Lower Back"
+  },
+  {
+    "name": "Deadlift with Chains",
+    "muscle_group": "Lower Back"
+  },
+  {
+    "name": "Rack Pull with Bands",
+    "muscle_group": "Lower Back"
+  },
+  {
+    "name": "Rack Pull with Bands",
+    "muscle_group": "Lower Back"
+  },
+  {
+    "name": "Superman",
+    "muscle_group": "Lower Back"
+  }
   ```
 
 3. Add Weighted Lunges to the App Workouts - /users/{user_id}/workouts (POST)
@@ -65,7 +121,7 @@ Example Flow 3:
   Chris introduces his friend Ozcar to the app, and Ozcar is excited to start tracking his workouts with his own personalized data. Ozcar begins by creating an account, calling `POST /users` to create an account. Eager to start his fitness journey, Ozcar explores the available workouts by calling `GET /workouts`, which returns a list of exercises along with the muscle groups they target. After browsing through the options, Ozcar adds his workouts through `POST /users/{user_id}/workouts`. He's curious on whether his routine is good, so he calls `GET /{user_id}/tips/{fitness_goal}` with his fitness goal being pure strength. The endpoint returns results indicating that he does too many reps per set, and suggests that he increases the weight and lowers the amount of reps. Ozcar alters his routine, optimizing his workouts to build strength.
 
 // add delete user workout
-// add change user workout
+//add change user workout
   
 # Testing Results
 
@@ -73,67 +129,82 @@ Example Flow 3:
 
 Curl Command:
 ```bash
-curl -X 'POST' 'https://csc365-fitness-tracker-1.onrender.com/users' -H 'Content-Type: application/json' -d '{"first_name": "Ozcar", "last_name": "Canete"}'
+curl -X 'POST'curl -X 'POST' \
+  'https://csc365-fitness-tracker-1.onrender.com/users/Ozcar/Canete' \
+  -H 'accept: application/json' \
+  -H 'access_token: fitnesstracker' \
+  -d '' 'https://csc365-fitness-tracker-1.onrender.com/users' -H 'Content-Type: application/json' -d '{"first_name": "Ozcar", "last_name": "Canete"}'
 ```
 Response:
 ```json
-{ "user_id": 2 }
+{
+  "first_name": "Ozcar",
+  "last_name": "Canete"
+}
 ``` 
 2. Get Workouts from the App - /workouts (GET)
 
 Curl Command:
 ```bash
-curl -X 'GET' 'https://csc365-fitness-tracker-1.onrender.com/workouts' -H 'accept: application/json'
+curl -X 'GET' \
+  'https://csc365-fitness-tracker-1.onrender.com/workouts/' \
+  -H 'accept: application/json' \
+  -H 'access_token: fitnesstracker'
 ```
 Response:
 ```json
-  { "name": "str", 
+  { 
+    "name": "str", 
   "muscle_groups": ["str"] 
-  },
+  EX:
+  
+    "name": "Single-Leg Press",
+    "muscle_group": "Quadriceps"
+
+  }
   ```
 
  3. Add Workouts for Oscar - /users/{user_id}/workouts (POST)
 
 Curl Command:
 ```bash
-curl -X 'POST' 'https://csc365-fitness-tracker-1.onrender.com/users/1/workouts' -H 'Content-Type: application/json' -d '
-  "name": "Squat",
-  "sets": 4,
-  "reps": [10, 8, 8, 6],
-  "weight": [80, 85, 90, 95],
-  "rest_time": [60, 60, 90, 90],
-  "one_rep_max_weight": 100   
+curl -X 'POST' \
+  'https://csc365-fitness-tracker-1.onrender.com/users/6/workouts/Front%20Squats%20With%20Two%20Kettlebells?sets=2&reps=10&weight=30&rest_time=60&one_rep_max=80' \
+  -H 'accept: application/json' \
+  -H 'access_token: fitnesstracker' \
+  -d '' 
 ```
 Response:
 ```json
-{ "status": "success", 
-"message": "Workout added for user." }
+{
+  "user_id": "6",
+  "workout_id": 58,
+  "sets": 2,
+  "reps": 10,
+  "weight": 30,
+  "rest_time": 60,
+  "one_rep_max": 80
+}
 ```
 
 4. Get User's Fitness Goal - /{user_id}/tips/{fitness_goal} (GET)
 
 Curl Command:
 ```bash
-curl -X 'POST' 'https://csc365-fitness-tracker-1.onrender.com/{user_id}/tips/{fitness_goal}' -H 'Content-Type: application/json' 
-```
+curl -X 'GET' \
+  'https://csc365-fitness-tracker-1.onrender.com/analysis/6/tips/Front%20Squats%20With%20Two%20Kettlebells' \
+  -H 'accept: application/json' \
+  -H 'access_token: fitnesstracker'
+  ```
+
 Response:
 ```json
 {
-    "sets": {
-        "analysis": Literal["low", "just_right", "excessive"],
-        "target": int,
-      },
-    "reps": {
-        "analysis": Literal["low", "just_right", "excessive"],
-        "target": int,
-      },
-    "weight": {
-        "analysis": Literal["low", "just_right", "excessive"],
-        "target": int,
-      },
-    "rest_time": {
-        "analysis": Literal["low", "just_right", "excessive"],
-        "target": int,
-      }
+  "Front Squats With Two Kettlebells": {
+    "sets": "just_right",
+    "reps": "too_low",
+    "weight": "too_low",
+    "rest_time": "just_right"
   }
+}
 ``` 
