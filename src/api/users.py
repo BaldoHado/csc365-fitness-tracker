@@ -28,6 +28,49 @@ def post_user(first_name: str, last_name: str):
     return {"first_name": first_name, "last_name": last_name}
 
 
+@router.put("/{user_id}/workouts/{workout_name}")
+def update_user_workout(
+    user_id: str,
+    workout_name: str,
+    sets: int = None,
+    reps: int = None,
+    weight: int = None,
+    rest_time: int = None,
+    one_rep_max: int = None,
+):
+    workout_id = workouts.find_workout(workout_name).get("workout_id", None)
+    if not workout_id:
+        return "Err: Invalid Workout Name"
+
+    update_data = {}
+    if sets is not None:
+        update_data["sets"] = sets
+    if reps is not None:
+        update_data["reps"] = reps
+    if weight is not None:
+        update_data["weight"] = weight
+    if rest_time is not None:
+        update_data["rest_time"] = rest_time
+    if one_rep_max is not None:
+        update_data["one_rep_max"] = one_rep_max
+
+    if len(update_data.keys()) == 0:
+        return "Err: No update data provided"
+
+    set_clause = ", ".join([f"{key} = :{key}" for key in update_data.keys()])
+    update_data["user_id"] = user_id
+    update_data["workout_id"] = workout_id
+
+    with db.engine.begin() as connection:
+        connection.execute(
+            sqlalchemy.text(
+                f"UPDATE user_workout_item SET {set_clause} WHERE user_id = :user_id AND workout_id = :workout_id"
+            ),
+            update_data,
+        )
+    return "OK"
+
+
 @router.post("/{user_id}/workouts/{workout_name}")
 def post_workout_to_user(
     user_id: str,
