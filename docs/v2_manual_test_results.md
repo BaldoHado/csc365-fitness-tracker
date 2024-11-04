@@ -62,8 +62,10 @@ Response:
 # Example Workflow 3
 Example Flow 3: 
 
- Chris introduces his friend Ozcar to the app, and Ozcar is excited to start tracking his workouts with his own personalized data. Ozcar begins by creating an account, calling `POST /users` to create an account. Eager to start his fitness journey, Ozcar explores the available workouts by calling `GET /workouts`, which returns a list of exercises along with the muscle groups they target. After browsing through the options, Ozcar adds his workouts through `POST /users/{user_id}/workouts`. He's curious on whether his routine is good, so he calls `GET /{user_id}/tips/{fitness_goal}` with his fitness goal being pure strength. The endpoint returns results indicating that he does too many reps per set, and suggests that he increases the weight and lowers the amount of reps. Ozcar alters his routine using, optimizing his workouts to build strength.
+  Chris introduces his friend Ozcar to the app, and Ozcar is excited to start tracking his workouts with his own personalized data. Ozcar begins by creating an account, calling `POST /users` to create an account. Eager to start his fitness journey, Ozcar explores the available workouts by calling `GET /workouts`, which returns a list of exercises along with the muscle groups they target. After browsing through the options, Ozcar adds his workouts through `POST /users/{user_id}/workouts`. He's curious on whether his routine is good, so he calls `GET /{user_id}/tips/{fitness_goal}` with his fitness goal being pure strength. The endpoint returns results indicating that he does too many reps per set, and suggests that he increases the weight and lowers the amount of reps. Ozcar alters his routine, optimizing his workouts to build strength.
 
+// add delete user workout
+// add change user workout
   
 # Testing Results
 
@@ -75,7 +77,7 @@ curl -X 'POST' 'https://csc365-fitness-tracker-1.onrender.com/users' -H 'Content
 ```
 Response:
 ```json
-{ "user_id": 1 }
+{ "user_id": 2 }
 ``` 
 2. Get Workouts from the App - /workouts (GET)
 
