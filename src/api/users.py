@@ -142,3 +142,22 @@ def get_workouts_from_user(user_id: str) -> List[utils.NamedWorkoutItem]:
         )
         for workout_name, sets, reps, weight, rest_time, one_rep_max in workouts_db
     ]
+
+
+@router.delete("/{user_id}/workouts")
+def delete_workout_from_user(user_id: str, workout_name: str):
+    with db.engine.begin() as connection:
+        connection.execute(
+            sqlalchemy.text(
+                "DELETE FROM user_workout_item " 
+                "WHERE user_id = :user_id  AND workout_id IN ("    
+                "    SELECT workout.workout_id "
+                "    FROM workout "
+                "    WHERE workout.workout_name = :workout_name"
+                ")"
+            ),
+            {"workout_name": workout_name, "user_id": user_id},
+        )
+
+    return "OK"    
+
