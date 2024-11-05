@@ -140,14 +140,14 @@ Response:
 # Example Workflow 3
 Example Flow 3: 
 
-  Chris introduces his friend Ozcar to the app, and Ozcar is excited to start tracking his workouts with his own personalized data. Ozcar begins by creating an account, calling `POST /users` to create an account. Eager to start his fitness journey, Ozcar explores the available workouts by calling `GET /workouts`, which returns a list of exercises along with the muscle groups they target. After browsing through the options, Ozcar adds his workouts through `POST /users/{user_id}/workouts`. He's curious on whether his routine is good, so he calls `GET /{user_id}/tips/{fitness_goal}` with his fitness goal being pure strength. The endpoint returns results indicating that he does too many reps per set, and suggests that he increases the weight and lowers the amount of reps. Ozcar alters his routine, optimizing his workouts to build strength.
+  Chris introduces his friend Ozcar to the app, and Ozcar is excited to start tracking his workouts with his own personalized data. Ozcar begins by creating an account, calling `POST /users` to create an account. Eager to start his fitness journey, Ozcar explores the available workouts by calling `GET /workouts`, which returns a list of exercises along with the muscle groups they target. After browsing through the options, Ozcar adds his workouts through `POST /users/{user_id}/workouts/{workout_name} `. He's curious on whether his routine is good, so he calls `GET /analysis/{user_id}/tips/{fitness_goal}` with his fitness goal being pure strength. The endpoint returns results indicating that he does too many reps per set, and suggests that he increases the weight and lowers the amount of reps. Ozcar alters his routine, optimizing his workouts to build strength.
 
 // add delete user workout
 //add change user workout
   
 # Testing Results
 
-1. Add a New User - /users (POST)
+1. Add a New User - /users/{first_name}/{last_name} (POST)
 
 Curl Command:
 ```bash
@@ -187,7 +187,7 @@ Response:
   }
   ```
 
- 3. Add Workouts for Oscar - /users/{user_id}/workouts (POST)
+ 3. Add Workouts for Oscar - /users/{user_id}/workouts/{workout_name} (POST)
 
 Curl Command:
 ```bash
@@ -210,7 +210,7 @@ Response:
 }
 ```
 
-4. Get User's Fitness Goal - /{user_id}/tips/{fitness_goal} (GET)
+4. Get User's Fitness Goal - /analysis/{user_id}/tips/{fitness_goal} (GET)
 
 Curl Command:
 ```bash
