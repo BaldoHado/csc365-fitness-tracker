@@ -149,8 +149,8 @@ def delete_workout_from_user(user_id: str, workout_name: str):
     with db.engine.begin() as connection:
         connection.execute(
             sqlalchemy.text(
-                "DELETE FROM user_workout_item " 
-                "WHERE user_id = :user_id  AND workout_id IN ("    
+                "DELETE FROM user_workout_item "
+                "WHERE user_id = :user_id  AND workout_id IN ("
                 "    SELECT workout.workout_id "
                 "    FROM workout "
                 "    WHERE workout.workout_name = :workout_name"
@@ -159,5 +159,4 @@ def delete_workout_from_user(user_id: str, workout_name: str):
             {"workout_name": workout_name, "user_id": user_id},
         )
 
-    return "OK"    
-
+    return "OK"

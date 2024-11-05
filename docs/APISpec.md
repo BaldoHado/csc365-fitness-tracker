@@ -1,6 +1,4 @@
-# API Specification for Fitness Tracker App
-
-### Get Workouts - `/workouts/` (GET)
+### Get Workouts - /workouts/ (GET)
 Retrieves a list of workouts that are supported on the fitness app.
 
 Response:
@@ -8,146 +6,181 @@ Response:
 [
   {
     "name": str,
-    "muscle_groups": str,
+    "muscle_group": str
   }
 ]
 ```
 
-### Add Custom Workout - `/workouts/{workout_name}` (POST)
-Add a custom workout to the app. Note that the name of this workout must not conflict with any workouts already existing in the database.
+### Get Workouts by Muscle Group - /workouts/{muscle_group} (GET)
+Retrieves workouts filtered by muscle group.
 
-Request:
+Parameters:
+- muscle_group: str (path parameter)
+
+Response:
 ```python
 [
   {
-    "name": str, # Must be unique
-    "muscle_groups": str,
+    "name": str,
+    "muscle_group": str
+  }
+]
+```
+
+### Search Workout - /workouts/search/{workout_name} (GET)
+Searches for a specific workout by name.
+
+Parameters:
+- workout_name: str (path parameter)
+
+Response:
+```python
+{
+  "workout_id": int,
+  "workout_name": str,
+  "muscle_group": str,
+  "equipment": str
+}
+```
+
+### Create Custom Workout - /workouts/workouts/{workout_name}/{muscle_group}/{equipment} (POST)
+Creates a new custom workout.
+
+Parameters:
+- workout_name: str (path parameter)
+- muscle_group: str (path parameter)
+- equipment: str (path parameter)
+
+Response:
+```python
+[
+  {
+    "name": str,
+    "muscle_group": str,
     "equipment": str
   }
 ]
 ```
 
-### Search Workouts - `/workouts/search` (GET)
-Searches for workouts based on specified query parameters
+### Create User - /users/{first_name}/{last_name} (POST)
+Creates a new user.
 
-**Query Parameters**
-- `workout_name`: The name of the workout.
-- `muscle_groups`: The muscle groups that the workout targets
+Parameters:
+- first_name: str (path parameter)
+- last_name: str (path parameter)
 
-**Response**:
-- `results`: A list of each line item has the following properties:
-  - `workout_name`: A string that represents the name of the workout
-  - `muscle_groups`: A list of strings that represents the muscle groups that the workout targets
+Response:
+```python
+{
+  "first_name": str,
+  "last_name": str
+}
+```
 
+### Get User Workouts - /users/{user_id}/workouts (GET)
+Retrieves all workouts for a specific user.
 
-### Reset App - `/admin/reset/` (POST)
-A call to Reset App will erase all saved workout data. Should only be called when the user no longer uses the app and wants to delete everything.
-
-### Get User Workouts - `/workouts/{user_id}` (GET)
-Retrieves a list of workouts that are associated with user id.
+Parameters:
+- user_id: str (path parameter)
 
 Response:
 ```python
 [
   {
-    "workouts": str[],
-  }
-]
-```
-
-### Add User - `/users` (POST)
-Adds a user to the database
-
-Request:
-```python
-[
-  {
-    "first_name": int,
-    "last_name": int,
-  }
-]
-```
-
-### Add a Workout to a User - `/users/{user_id}/workouts` (POST)
-Adds a new workout to a user's account.
-
-Request:
-```python
-[
-  {
-    "name": str,
+    "workout_name": str,
     "sets": int,
-    "reps": int[],
-    "weight": int[],
-    "rest_time": int[],
-    "one_rep_max_weight": int
+    "reps": int,
+    "weight": int,
+    "rest_time": int,
+    "one_rep_max": int
   }
 ]
 ```
 
-### Get Muscle Distribution - `/analysis/{user_id}/distribution/` (GET)
-Retrieves the muscle distribution of the workouts for a given user.
+### Add Workout to User - /users/{user_id}/workouts/{workout_name} (POST)
+Adds a workout to a user's profile.
+
+Parameters:
+- user_id: str (path parameter)
+- workout_name: str (path parameter)
+- sets: int
+- reps: int
+- weight: int
+- rest_time: int
+- one_rep_max: int
+
+Response:
+```python
+{
+  "user_id": str,
+  "workout_id": int,
+  "sets": int,
+  "reps": int,
+  "weight": int,
+  "rest_time": int,
+  "one_rep_max": int
+}
+```
+
+### Update User Workout - /users/{user_id}/workouts/{workout_name} (PUT)
+Updates a user's workout details.
+
+Parameters:
+- user_id: str (path parameter)
+- workout_name: str (path parameter)
+- sets: int (optional)
+- reps: int (optional)
+- weight: int (optional)
+- rest_time: int (optional)
+- one_rep_max: int (optional)
+
+Response:
+```python
+"OK"
+```
+
+### Delete User Workout - /users/{user_id}/workouts (DELETE)
+Deletes a workout from a user's profile.
+
+Parameters:
+- user_id: str (path parameter)
+- workout_name: str
+
+Response:
+```python
+"OK"
+```
+
+### Get Workout Tips - /analysis/{user_id}/tips/{fitness_goal} (GET)
+Retrieves workout tips based on user's fitness goal.
+
+Parameters:
+- user_id: str (path parameter)
+- fitness_goal: str (path parameter)
+
+Response:
+```python
+{
+  "workout_name": {
+    "sets": str,
+    "reps": str,
+    "weight": str,
+    "rest_time": str
+  }
+}
+```
+
+### Get Workout Distribution - /analysis/{user_id}/distribution/ (POST)
+Analyzes the distribution of workouts for a user.
+
+Parameters:
+- user_id: str (path parameter)
 
 Response:
 ```python
 [
   {
-    "result": Distribution;
-  }
-]
-```
-```python
-class Distribution:
-  "chest": int,
-  "back": int,
-  "biceps": int,
-  "triceps": int,
-  "shoulders": int,
-  "glutes": int,
-  "calves": int,
-  "quads": int,
-  "hamstrings": int,
-  ...
-```
-
-### Get Workout Analysis - `/analysis/{user_id}/` (GET)
-Returns a general analysis of a user's workout.
-
-Response:
-```python
-[
-  {
-    "average_duration": int,
-    "average_workouts_per_week": int,
-    "average_cals_burned_per_workout": int,
-    "progression": Literal["very slow", "slow", "average", "fast", "very fast"]
-  }
-]
-```
-
-### Get Workout Improvement Tips - `/analysis/{user_id}/tips/` (GET)
-Analyzes a user's workout routine and returns improvement tips.
-
-Response:
-```python
-[
-  {
-    "sets": {
-        "analysis": Literal["low", "just_right", "excessive"],
-        "target": int,
-      },
-    "reps": {
-        "analysis": Literal["low", "just_right", "excessive"],
-        "target": int,
-      },
-    "weight": {
-        "analysis": Literal["low", "just_right", "excessive"],
-        "target": int,
-      },
-    "rest_time": {
-        "analysis": Literal["low", "just_right", "excessive"],
-        "target": int,
-      }
+    "workout_name": float
   }
 ]
 ```
