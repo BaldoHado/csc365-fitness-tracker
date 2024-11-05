@@ -17,7 +17,7 @@ router = APIRouter(
 @router.get("/{user_id}/tips/{fitness_goal}")
 def get_workout_tips(
     user_id: str, fitness_goal: utils.FitnessGoal
-) -> List[Dict[str, utils.AnalysisTip]]:
+) -> Dict[str, Dict[str, utils.AnalysisTip]]:
     workout_items = users.get_workouts_from_user(user_id)
     response = {}
     for workout_item in workout_items:
