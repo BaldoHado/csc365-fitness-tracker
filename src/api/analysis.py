@@ -4,7 +4,7 @@ from src.utils import data_utils
 import sqlalchemy
 from src import database as db
 from src.utils import analysis_utils, utils
-from typing import List
+from typing import List, Dict
 from collections import Counter
 
 router = APIRouter(
@@ -15,7 +15,9 @@ router = APIRouter(
 
 
 @router.get("/{user_id}/tips/{fitness_goal}")
-def get_workout_tips(user_id: str, fitness_goal: str):
+def get_workout_tips(
+    user_id: str, fitness_goal: utils.FitnessGoal
+) -> List[Dict[str, utils.AnalysisTip]]:
     workout_items = users.get_workouts_from_user(user_id)
     response = {}
     for workout_item in workout_items:
@@ -33,7 +35,7 @@ def get_workout_tips(user_id: str, fitness_goal: str):
 
 
 @router.post("/{user_id}/distribution/")
-def workout_distribution(user_id: str):
+def workout_distribution(user_id: str) -> List[Dict[str, float]]:
     with db.engine.begin() as conn:
         query = conn.execute(
             sqlalchemy.text(
