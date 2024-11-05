@@ -1,12 +1,12 @@
 # Example Workflow 2
 Example Flow 2: 
 
-After using the app for a few weeks, Chris decides to try some new exercises. To see his existing exercises, he starts by calling `GET /workouts/{user_id}`, which returns all the workouts he has saved in his account. While reviewing his progress, he decides to add more back exercises and begins by searching for back workouts, calling `GET /workouts/muscle_groups=back`, which returns a list of recommended exercises targeting the back. Inspired, Chris also decides to create a new custom workout for his lower body. He calls `POST /workouts/Weighted_Lunges` with the details for "Weighted Lunges," specifying that it targets his glutes and quads. With this new exercise saved in his account, Chris adds it to his regular workout routine by calling `POST /users/{user_id}/workouts`, including specific sets, reps, weights, and rest times for the exercise. Now, Chris has expanded his workout plan and is ready to get some new gains so he can be ready for the summer.
+After using the app for a few weeks, Chris decides to try some new exercises. To see his existing exercises, he starts by calling `GET /users/{user_id}/workouts`, which returns all the workouts he has saved in his account. While reviewing his progress, he decides to add more back exercises and begins by searching for lower back workouts, calling `GET /workouts/muscle_groups=back`, which returns a list of recommended exercises targeting the lower back. Inspired, Chris also decides to create a new custom workout for his lower body. He calls `POST /workouts//workouts/{workout_name}` with the details for "Weighted Lunges," specifying that it targets his quads. With this new exercise saved in his account, Chris adds it to his regular workout routine by calling `POST /users/{user_id}/workouts`, including specific sets, reps, weights, and rest times for the exercise. Now, Chris has expanded his workout plan and is ready to get some new gains so he can be ready for the summer.
 
 
 # Testing Results
 
-1. Accessing Personal Account Workouts - /workouts/{user_id} (GET)
+1. Accessing Personal Account Workouts - /users/{user_id}/workouts (GET)
 
 Curl Command:
 ```bash
@@ -17,17 +17,27 @@ curl -X 'GET' \
   ```
 Response:
 ```json
-{
+[
+  {
     "sets": 2,
     "reps": 10,
     "weight": 20,
     "rest_time": 60,
     "one_rep_max": 30,
     "workout_name": "Palms-up wrist curl over bench"
+  },
+  {
+    "sets": 2,
+    "reps": 10,
+    "weight": 35,
+    "rest_time": 60,
+    "one_rep_max": 80,
+    "workout_name": "Weighted Lunges"
   }
+]
 ```
 
-2. Get Workouts for Back - /workouts/search/muscle_groups=back (GET)
+2. Get Workouts for Back - /workouts/{muscle_group} (GET)
 
 Curl Command:
 ```bash
@@ -84,7 +94,7 @@ Response:
   }
   ```
 
-3. Add Weighted Lunges to the App Workouts - /users/{user_id}/workouts (POST)
+3. Add Weighted Lunges to the App Workouts - /workouts/workouts/{workout_name}/{muscle_group}/{equipment} (POST)
 
 Curl Command:
 ```bash
@@ -98,7 +108,7 @@ Response:
 ```json
 {
     "name": "Weighted Lunges",
-    "muscle_group": "Hamstrings",
+    "muscle_group": "Quads",
     "equipment": "Dumbbell"
   }
 ```

@@ -54,7 +54,7 @@ def post_custom_workout(workout_name: str, muscle_group: str, equipment: str):
     existing_workouts = set(workout[0] for workout in workouts)
 
     if workout_name in existing_workouts:
-        return []
+        return [{"Workout already exists in database."}]
 
     with db.engine.begin() as connection:
         connection.execute(
