@@ -1,10 +1,5 @@
-from fastapi import FastAPI, exceptions
-from fastapi.responses import JSONResponse
-from pydantic import ValidationError
+from fastapi import FastAPI
 from src.api import workouts, users, analysis
-import json
-import logging
-import sys
 from starlette.middleware.cors import CORSMiddleware
 
 description = "Fitness Tracker App for CSC 365"

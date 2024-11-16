@@ -116,7 +116,7 @@ def post_workout_to_user(
                 "one_rep_max": one_rep_max,
             },
         )
-    return Response(content="Workout added to user successfully.", status_code=200)
+    return Response(content="Workout added to user successfully.", status_code=201)
 
 
 @router.get("/{user_id}/workouts")

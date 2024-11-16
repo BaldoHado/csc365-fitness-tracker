@@ -70,7 +70,7 @@ def create_custom_workout(workout_name: str, muscle_group: str, equipment: str):
                 "equipment": equipment,
             },
         )
-    return Response(content="Custom workout added.", status_code=200)
+    return Response(content="Custom workout created.", status_code=201)
 
 
 @router.get("/search/{workout_name}")
