@@ -46,7 +46,7 @@ def get_workout_from_muscle_group(muscle_group: str):
             return [{"name": name, "muscle_group": group} for name, group in workouts]
 
 
-@router.post("/workouts/{workout_name}")
+@router.post("/{workout_name}")
 def create_custom_workout(workout_name: str, muscle_group: str, equipment: str):
     """
     Adds a custom workout to our database.

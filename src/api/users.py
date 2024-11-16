@@ -56,15 +56,15 @@ def update_user_workout(
         raise HTTPException(status_code=404, detail="Workout not found")
 
     update_data = {}
-    if sets is not None:
+    if sets:
         update_data["sets"] = sets
-    if reps is not None:
+    if reps:
         update_data["reps"] = reps
-    if weight is not None:
+    if weight:
         update_data["weight"] = weight
-    if rest_time is not None:
+    if rest_time:
         update_data["rest_time"] = rest_time
-    if one_rep_max is not None:
+    if one_rep_max:
         update_data["one_rep_max"] = one_rep_max
 
     if len(update_data.keys()) == 0:
