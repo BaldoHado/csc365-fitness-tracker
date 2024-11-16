@@ -24,9 +24,11 @@ def post_user(first_name: str, last_name: str):
     with db.engine.begin() as connection:
         insert_query = connection.execute(
             sqlalchemy.text(
-                """INSERT INTO users (first_name, last_name)
+                """
+                INSERT INTO users (first_name, last_name)
                 VALUES (:first_name, :last_name)
-                RETURNING user_id"""
+                RETURNING user_id
+                """
             ),
             {"first_name": first_name, "last_name": last_name},
         ).first()

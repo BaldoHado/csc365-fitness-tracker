@@ -62,7 +62,10 @@ def create_custom_workout(workout_name: str, muscle_group: str, equipment: str):
             raise HTTPException(409, "Workout name already exists")
         connection.execute(
             sqlalchemy.text(
-                "INSERT INTO workout (workout_name, muscle_group, equipment) VALUES (:workout_name, :muscle_group, :equipment)"
+                """
+                INSERT INTO workout (workout_name, muscle_group, equipment) 
+                VALUES (:workout_name, :muscle_group, :equipment)
+                """
             ),
             {
                 "workout_name": workout_name,
@@ -81,7 +84,10 @@ def find_workout(workout_name: str):
     with db.engine.begin() as conn:
         query = conn.execute(
             sqlalchemy.text(
-                "SELECT workout_id, workout_name, muscle_group, equipment FROM workout WHERE LOWER(workout_name) = LOWER(:workout_name)"
+                """
+                SELECT workout_id, workout_name, muscle_group, equipment
+                FROM workout WHERE LOWER(workout_name) = LOWER(:workout_name)
+                """
             ),
             {"workout_name": workout_name},
         ).first()
