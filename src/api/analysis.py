@@ -4,6 +4,7 @@ import sqlalchemy
 from src import database as db
 from src.utils import analysis_utils, utils
 from typing import List, Dict
+from pydantic import PositiveInt
 
 
 router = APIRouter(
@@ -15,8 +16,13 @@ router = APIRouter(
 
 @router.get("/{user_id}/tips/{fitness_goal}")
 def get_workout_tips(
-    user_id: str, fitness_goal: utils.FitnessGoal
+    user_id: PositiveInt, fitness_goal: utils.FitnessGoal
 ) -> Dict[str, Dict[str, utils.AnalysisTip]]:
+    """
+    Returns tips for the workouts of a given user.
+    Analyzes the sets, reps, weights, and rest time of each workout
+    given a fitness goal.
+    """
     workout_items = users.get_workouts_from_user(user_id)
     response = {}
     for workout_item in workout_items:
@@ -34,7 +40,7 @@ def get_workout_tips(
 
 
 @router.post("/{user_id}/distribution/")
-def workout_distribution(user_id: str) -> List[Dict[str, float]]:
+def workout_distribution(user_id: PositiveInt) -> List[Dict[str, float]]:
     """
     Calculates the percent of workouts per muscle group
     for a given user.

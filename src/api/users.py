@@ -5,6 +5,7 @@ from src import database as db
 import src.api.workouts as workouts
 import src.utils.utils as utils
 from typing import List
+from pydantic import PositiveInt, BaseModel
 
 router = APIRouter(
     prefix="/users",
@@ -15,28 +16,36 @@ router = APIRouter(
 
 @router.post("/{first_name}/{last_name}")
 def post_user(first_name: str, last_name: str):
+    """
+    Inserts a new user into the database.
+    Returns the user's id.
+    """
     with db.engine.begin() as connection:
-        connection.execute(
+        (user_id,) = connection.execute(
             sqlalchemy.text(
-                "INSERT INTO users (first_name, last_name) "
-                "VALUES (:first_name, :last_name)"
+                """INSERT INTO users (first_name, last_name)
+                VALUES (:first_name, :last_name)
+                RETURNING user_id"""
             ),
             {"first_name": first_name, "last_name": last_name},
-        )
+        ).first()
 
-    return {"first_name": first_name, "last_name": last_name}
+    return {"user_id": user_id}
 
 
 @router.put("/{user_id}/workouts/{workout_name}")
 def update_user_workout(
-    user_id: str,
+    user_id: PositiveInt,
     workout_name: str,
-    sets: int = None,
-    reps: int = None,
-    weight: int = None,
-    rest_time: int = None,
-    one_rep_max: int = None,
+    sets: PositiveInt = None,
+    reps: PositiveInt = None,
+    weight: PositiveInt = None,
+    rest_time: PositiveInt = None,
+    one_rep_max: PositiveInt = None,
 ):
+    """
+    Updates a workout in a user's account.
+    """
     workout_id = workouts.find_workout(workout_name).get("workout_id", None)
     if not workout_id:
         raise HTTPException(status_code=404, detail="Workout not found")
@@ -72,22 +81,27 @@ def update_user_workout(
 
 @router.post("/{user_id}/workouts/{workout_name}")
 def post_workout_to_user(
-    user_id: str,
+    user_id: PositiveInt,
     workout_name: str,
-    sets: int,
-    reps: int,
-    weight: int,
-    rest_time: int,
-    one_rep_max: int,
+    sets: PositiveInt,
+    reps: PositiveInt,
+    weight: PositiveInt,
+    rest_time: PositiveInt,
+    one_rep_max: PositiveInt,
 ):
+    """
+    Adds a new workout to a user's account.
+    """
     workout_id = workouts.find_workout(workout_name).get("workout_id", None)
     if not workout_id:
         raise HTTPException(status_code=404, detail="Workout not found")
     with db.engine.begin() as connection:
         connection.execute(
             sqlalchemy.text(
-                "INSERT INTO user_workout_item (user_id, workout_id, sets, reps, weight, rest_time, one_rep_max) "
-                "VALUES (:user_id, :workout_id, :sets, :reps, :weight, :rest_time, :one_rep_max)"
+                """
+                INSERT INTO user_workout_item (user_id, workout_id, sets, reps, weight, rest_time, one_rep_max) 
+                VALUES (:user_id, :workout_id, :sets, :reps, :weight, :rest_time, :one_rep_max)
+                """
             ),
             {
                 "user_id": user_id,
@@ -99,31 +113,28 @@ def post_workout_to_user(
                 "one_rep_max": one_rep_max,
             },
         )
-    return {
-        "user_id": user_id,
-        "workout_id": workout_id,
-        "sets": sets,
-        "reps": reps,
-        "weight": weight,
-        "rest_time": rest_time,
-        "one_rep_max": one_rep_max,
-    }
+    return "OK"
 
 
 @router.get("/{user_id}/workouts")
-def get_workouts_from_user(user_id: str) -> List[utils.NamedWorkoutItem]:
+def get_workouts_from_user(user_id: PositiveInt) -> List[utils.NamedWorkoutItem]:
+    """
+    Returns all workouts from a user's account.
+    """
     with db.engine.begin() as connection:
         workouts_db = connection.execute(
             sqlalchemy.text(
-                "SELECT workout.workout_name, "
-                "u.sets, "
-                "u.reps, "
-                "u.weight, "
-                "u.rest_time, "
-                "u.one_rep_max "
-                "FROM user_workout_item u "
-                "JOIN workout on workout.workout_id = u.workout_id "
-                "WHERE user_id = :user_id"
+                """
+                SELECT workout.workout_name,
+                    u.sets,
+                    u.reps,
+                    u.weight,
+                    u.rest_time,
+                    u.one_rep_max
+                FROM user_workout_item u
+                JOIN workout ON workout.workout_id = u.workout_id
+                WHERE user_id = :user_id
+                """
             ),
             {"user_id": user_id},
         ).fetchall()
@@ -144,16 +155,20 @@ def get_workouts_from_user(user_id: str) -> List[utils.NamedWorkoutItem]:
 
 
 @router.delete("/{user_id}/workouts")
-def delete_workout_from_user(user_id: str, workout_name: str):
+def delete_workout_from_user(user_id: PositiveInt, workout_name: str):
+    """
+    Deletes a workout from a user's account.
+    """
     with db.engine.begin() as connection:
         connection.execute(
             sqlalchemy.text(
-                "DELETE FROM user_workout_item "
-                "WHERE user_id = :user_id  AND workout_id IN ("
-                "    SELECT workout.workout_id "
-                "    FROM workout "
-                "    WHERE workout.workout_name = :workout_name"
-                ")"
+                """
+                DELETE FROM user_workout_item 
+                WHERE user_id = :user_id  AND workout_id IN (
+                SELECT workout.workout_id
+                FROM workout
+                WHERE workout.workout_name = :workout_name)
+                """
             ),
             {"workout_name": workout_name, "user_id": user_id},
         )

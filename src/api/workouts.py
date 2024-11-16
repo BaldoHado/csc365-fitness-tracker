@@ -12,6 +12,9 @@ router = APIRouter(
 
 @router.get("/")
 def get_workouts():
+    """
+    Gets all workouts in our database.
+    """
     with db.engine.begin() as connection:
         workouts = connection.execute(
             sqlalchemy.text("SELECT workout_name, muscle_group FROM workout")
@@ -29,6 +32,9 @@ def get_workouts():
 
 @router.get("/{muscle_group}")
 def get_workout_from_muscle_group(muscle_group: str):
+    """
+    Gets all workouts in our database that work a given muscle group.
+    """
     with db.engine.begin() as connection:
         workouts = connection.execute(
             sqlalchemy.text(
@@ -43,7 +49,10 @@ def get_workout_from_muscle_group(muscle_group: str):
 
 
 @router.post("/workouts/{workout_name}/{muscle_group}/{equipment}")
-def post_custom_workout(workout_name: str, muscle_group: str, equipment: str):
+def create_custom_workout(workout_name: str, muscle_group: str, equipment: str):
+    """
+    Adds a custom workout to our database.
+    """
     with db.engine.begin() as connection:
         workouts = connection.execute(
             sqlalchemy.text("SELECT workout_name FROM workout")
@@ -73,6 +82,9 @@ def post_custom_workout(workout_name: str, muscle_group: str, equipment: str):
 
 @router.get("/search/{workout_name}")
 def find_workout(workout_name: str):
+    """
+    Finds data about a given workout.
+    """
     with db.engine.begin() as conn:
         query = conn.execute(
             sqlalchemy.text(
