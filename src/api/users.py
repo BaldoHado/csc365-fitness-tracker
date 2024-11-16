@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import Response
 from src.api import auth
 import sqlalchemy
 from src import database as db
@@ -14,14 +15,14 @@ router = APIRouter(
 )
 
 
-@router.post("/{first_name}/{last_name}")
+@router.post("/")
 def post_user(first_name: str, last_name: str):
     """
     Inserts a new user into the database.
     Returns the user's id.
     """
     with db.engine.begin() as connection:
-        (user_id,) = connection.execute(
+        insert_query = connection.execute(
             sqlalchemy.text(
                 """INSERT INTO users (first_name, last_name)
                 VALUES (:first_name, :last_name)
@@ -29,8 +30,10 @@ def post_user(first_name: str, last_name: str):
             ),
             {"first_name": first_name, "last_name": last_name},
         ).first()
+        if not insert_query:
+            raise HTTPException(500, "Unable to insert into table. Unknown error")
 
-    return {"user_id": user_id}
+    return {"user_id": insert_query[0]}
 
 
 @router.put("/{user_id}/workouts/{workout_name}")
@@ -76,7 +79,7 @@ def update_user_workout(
             ),
             update_data,
         )
-    return "OK"
+    return Response(content="Workout updated successfully.", status_code=200)
 
 
 @router.post("/{user_id}/workouts/{workout_name}")
@@ -113,18 +116,22 @@ def post_workout_to_user(
                 "one_rep_max": one_rep_max,
             },
         )
-    return "OK"
+    return Response(content="Workout added to user successfully.", status_code=200)
 
 
 @router.get("/{user_id}/workouts")
-def get_workouts_from_user(user_id: PositiveInt) -> List[utils.NamedWorkoutItem]:
+def get_workouts_from_user(
+    user_id: PositiveInt, workout_name: str = None
+) -> List[utils.NamedWorkoutItem]:
     """
-    Returns all workouts from a user's account.
+    Returns workouts from a user's account. If a workout_name is specified,
+    returns info about the specific workout.
     """
     with db.engine.begin() as connection:
+        workout_filter_clause = "AND LOWER(workout_name) = LOWER(:workout_name)"
         workouts_db = connection.execute(
             sqlalchemy.text(
-                """
+                f"""
                 SELECT workout.workout_name,
                     u.sets,
                     u.reps,
@@ -133,14 +140,17 @@ def get_workouts_from_user(user_id: PositiveInt) -> List[utils.NamedWorkoutItem]
                     u.one_rep_max
                 FROM user_workout_item u
                 JOIN workout ON workout.workout_id = u.workout_id
-                WHERE user_id = :user_id
+                WHERE user_id = :user_id {workout_filter_clause if workout_name else ''}
                 """
             ),
-            {"user_id": user_id},
+            {"user_id": user_id, "workout_name": workout_name},
         ).fetchall()
 
     if not workouts_db:
-        return []
+        raise HTTPException(
+            status_code=404,
+            detail=f"No workout data found for user with ID {user_id}.",
+        )
     return [
         utils.NamedWorkoutItem(
             workout_name=workout_name,
@@ -160,17 +170,18 @@ def delete_workout_from_user(user_id: PositiveInt, workout_name: str):
     Deletes a workout from a user's account.
     """
     with db.engine.begin() as connection:
+        get_workouts_from_user(user_id, workout_name)
         connection.execute(
             sqlalchemy.text(
                 """
-                DELETE FROM user_workout_item 
+                DELETE FROM user_workout_item
                 WHERE user_id = :user_id  AND workout_id IN (
                 SELECT workout.workout_id
                 FROM workout
                 WHERE workout.workout_name = :workout_name)
                 """
             ),
-            {"workout_name": workout_name, "user_id": user_id},
+            {"user_id": user_id, "workout_name": workout_name},
         )
 
-    return "OK"
+    return Response(content="Workout deleted succesfully.", status_code=200)

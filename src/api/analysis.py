@@ -14,7 +14,7 @@ router = APIRouter(
 )
 
 
-@router.get("/{user_id}/tips/{fitness_goal}")
+@router.get("/users/{user_id}/tips/{fitness_goal}")
 def get_workout_tips(
     user_id: PositiveInt, fitness_goal: utils.FitnessGoal
 ) -> Dict[str, Dict[str, utils.AnalysisTip]]:
@@ -36,10 +36,16 @@ def get_workout_tips(
                 workout_item.rest_time, fitness_goal
             ),
         }
+    if not response:
+        raise HTTPException(
+            status_code=404,
+            detail=f"No workout data found for user with ID {user_id}.",
+        )
+
     return response
 
 
-@router.post("/{user_id}/distribution/")
+@router.get("/users/{user_id}/distributions/")
 def workout_distribution(user_id: PositiveInt) -> List[Dict[str, float]]:
     """
     Calculates the percent of workouts per muscle group
