@@ -1,11 +1,10 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from src.api import auth, users
-from src.utils import data_utils
 import sqlalchemy
 from src import database as db
 from src.utils import analysis_utils, utils
 from typing import List, Dict
-from collections import Counter
+
 
 router = APIRouter(
     prefix="/analysis",
@@ -36,25 +35,31 @@ def get_workout_tips(
 
 @router.post("/{user_id}/distribution/")
 def workout_distribution(user_id: str) -> List[Dict[str, float]]:
+    """
+    Calculates the percent of workouts per muscle group
+    for a given user.
+    """
     with db.engine.begin() as conn:
         query = conn.execute(
             sqlalchemy.text(
                 """
-                WITH TotalWorkouts AS (
-                    SELECT COUNT(workout_id) AS workout_count
-                    FROM user_workout_item
-                    WHERE user_id = :id
-                )
-                SELECT workout.workout_name, ROUND(COUNT(workout.muscle_group)::DECIMAL / (SELECT workout_count FROM TotalWorkouts), 4) AS percentage
+                SELECT 
+                    LOWER(workout.muscle_group) AS muscle_group, 
+                    ROUND(COUNT(workout.muscle_group)::DECIMAL / 
+                        (SELECT COUNT(*) 
+                        FROM user_workout_item 
+                        WHERE user_id = :user_id), 3) AS percentage
                 FROM user_workout_item
                 JOIN workout ON user_workout_item.workout_id = workout.workout_id
                 WHERE user_id = :user_id
-                GROUP BY workout.workout_name
+                GROUP BY muscle_group
                 """
             ),
             {"id": user_id, "user_id": user_id},
         ).fetchall()
         if not query:
-            return []
-        query = [{name: val} for name, val in query]
-    return query
+            raise HTTPException(
+                status_code=404,
+                detail=f"No workout data found for user with ID {user_id}.",
+            )
+    return [{name: val} for name, val in query]
