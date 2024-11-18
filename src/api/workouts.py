@@ -117,17 +117,21 @@ def find_workout(
     Finds a workout given filter(s).
     """
     with db.engine.begin() as conn:
-        present_args = {
-            **({"workout_name": workout_name} if workout_name else {}),
-            **({"muscle_group_name": muscle_group_name} if muscle_group_name else {}),
-            **({"equipment_name": equipment_name} if equipment_name else {}),
-        }
-        if not present_args:
+        if not (
+            present_args := {
+                **({"workout_name": workout_name} if workout_name else {}),
+                **(
+                    {"muscle_group_name": muscle_group_name}
+                    if muscle_group_name
+                    else {}
+                ),
+                **({"equipment_name": equipment_name} if equipment_name else {}),
+            }
+        ):
             raise HTTPException(400, "Pick a filter.")
         where_clause = ""
         for filter_name in present_args.keys():
             where_clause += f'{(" AND " if where_clause else "")} LOWER({filter_name}) = LOWER(:{filter_name})'
-        print(where_clause)
         query = conn.execute(
             sqlalchemy.text(
                 f"""
