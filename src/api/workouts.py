@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi.responses import Response
+from fastapi.responses import Response, JSONResponse
 from src.api import auth
 import sqlalchemy
 from src import database as db
+from pydantic import PositiveInt
 
 router = APIRouter(
     prefix="/workouts",
@@ -29,15 +30,18 @@ def get_workouts():
         ).fetchall()
         if not len(workouts):
             raise HTTPException(500, "Unknown Error")
-        return [
-            {
-                "workout_id": wk_id,
-                "workout_name": wk_name,
-                "muscle_group_name": mg_name,
-                "equipment_name": e_name,
-            }
-            for wk_id, wk_name, mg_name, e_name in workouts
-        ]
+        return JSONResponse(
+            content=[
+                {
+                    "workout_id": wk_id,
+                    "workout_name": wk_name,
+                    "muscle_group_name": mg_name,
+                    "equipment_name": e_name,
+                }
+                for wk_id, wk_name, mg_name, e_name in workouts
+            ],
+            status_code=200,
+        )
 
 
 @router.post("/{workout_name}")
@@ -119,12 +123,15 @@ def create_custom_workout(workout_name: str, muscle_group: str, equipment: str):
                 "equipment_id": equipment_id,
             },
         ).first()[0]
-    return {"workout_id": new_workout_id}
+    return JSONResponse({"workout_id": new_workout_id}, 201)
 
 
 @router.get("/search/")
 def find_workout(
-    workout_name: str = None, muscle_group_name: str = None, equipment_name: str = None
+    workout_id: PositiveInt = None,
+    workout_name: str = None,
+    muscle_group_name: str = None,
+    equipment_name: str = None,
 ):
     """
     Finds a workout given filter(s).
@@ -132,6 +139,7 @@ def find_workout(
     with db.engine.begin() as conn:
         if not (
             present_args := {
+                **({"workout_id": workout_id} if workout_id else {}),
                 **({"workout_name": workout_name} if workout_name else {}),
                 **(
                     {"muscle_group_name": muscle_group_name}
@@ -157,14 +165,15 @@ def find_workout(
             ),
             present_args,
         ).fetchall()
-        if not query:
-            raise HTTPException(404, "Workout not found")
-        return [
-            {
-                "workout_id": wrk_id,
-                "workout_name": wrk_name,
-                "muscle_group": mg_name,
-                "equipment": e_name,
-            }
-            for wrk_id, wrk_name, mg_name, e_name in query
-        ]
+        return JSONResponse(
+            content=[
+                {
+                    "workout_id": wrk_id,
+                    "workout_name": wrk_name,
+                    "muscle_group": mg_name,
+                    "equipment": e_name,
+                }
+                for wrk_id, wrk_name, mg_name, e_name in query
+            ],
+            status_code=200,
+        )

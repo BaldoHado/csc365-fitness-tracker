@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi.responses import Response
+from fastapi.responses import Response, JSONResponse
 from src.api import auth
 import sqlalchemy
 from src import database as db
 import src.api.workouts as workouts
 import src.utils.utils as utils
 from typing import List
-from pydantic import PositiveInt, BaseModel
+from pydantic import PositiveInt
 
 router = APIRouter(
     prefix="/users",
@@ -35,13 +35,13 @@ def post_user(first_name: str, last_name: str):
         if not insert_query:
             raise HTTPException(500, "Unable to insert into table. Unknown error")
 
-    return {"user_id": insert_query[0]}
+    return JSONResponse(content={"user_id": insert_query[0]}, status_code=201)
 
 
-@router.put("/{user_id}/workouts/{workout_name}")
+@router.put("/{user_id}/workouts/{workout_id}")
 def update_user_workout(
     user_id: PositiveInt,
-    workout_name: str,
+    workout_id: PositiveInt,
     sets: PositiveInt = None,
     reps: PositiveInt = None,
     weight: PositiveInt = None,
@@ -51,8 +51,8 @@ def update_user_workout(
     """
     Updates a workout in a user's account.
     """
-    workout_id = workouts.find_workout(workout_name).get("workout_id", None)
-    if not workout_id:
+    existing_workout = workouts.find_workout(workout_id)
+    if not existing_workout:
         raise HTTPException(status_code=404, detail="Workout not found")
 
     update_data = {}
@@ -153,17 +153,20 @@ def get_workouts_from_user(
             status_code=404,
             detail=f"No workout data found for user with ID {user_id}.",
         )
-    return [
-        utils.NamedWorkoutItem(
-            workout_name=workout_name,
-            sets=sets,
-            reps=reps,
-            weight=weight,
-            rest_time=rest_time,
-            one_rep_max=one_rep_max,
-        )
-        for workout_name, sets, reps, weight, rest_time, one_rep_max in workouts_db
-    ]
+    return JSONResponse(
+        content=[
+            utils.NamedWorkoutItem(
+                workout_name=workout_name,
+                sets=sets,
+                reps=reps,
+                weight=weight,
+                rest_time=rest_time,
+                one_rep_max=one_rep_max,
+            )
+            for workout_name, sets, reps, weight, rest_time, one_rep_max in workouts_db
+        ],
+        status_code=200,
+    )
 
 
 @router.delete("/{user_id}/workouts")

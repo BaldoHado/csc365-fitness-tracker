@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import JSONResponse
 from src.api import auth, users
 import sqlalchemy
 from src import database as db
@@ -42,7 +43,7 @@ def get_workout_tips(
             detail=f"No workout data found for user with ID {user_id}.",
         )
 
-    return response
+    return JSONResponse(content=response, status_code=200)
 
 
 @router.get("/users/{user_id}/distributions/")
@@ -74,4 +75,4 @@ def workout_distribution(user_id: PositiveInt) -> List[Dict[str, float]]:
                 status_code=404,
                 detail=f"No workout data found for user with ID {user_id}.",
             )
-    return [{name: val} for name, val in query]
+    return JSONResponse(content=[{name: val} for name, val in query], status_code=200)
