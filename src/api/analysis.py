@@ -17,7 +17,8 @@ router = APIRouter(
 
 @router.get("/users/{user_id}/tips/{fitness_goal}")
 def get_workout_tips(
-    user_id: PositiveInt, fitness_goal: utils.FitnessGoal
+    user_id: PositiveInt,
+    fitness_goal: utils.FitnessGoal,
 ) -> Dict[str, Dict[str, utils.AnalysisTip]]:
     """
     Returns tips for the workouts of a given user.
@@ -47,32 +48,33 @@ def get_workout_tips(
 
 
 @router.get("/users/{user_id}/distributions/")
-def workout_distribution(user_id: PositiveInt) -> List[Dict[str, float]]:
+def workout_distribution(
+    user_id: PositiveInt, conn: sqlalchemy.Connection = Depends(db.get_db_connection)
+) -> List[Dict[str, float]]:
     """
     Calculates the percent of workouts per muscle group
     for a given user.
     """
-    with db.engine.begin() as conn:
-        query = conn.execute(
-            sqlalchemy.text(
-                """
-                SELECT 
-                    LOWER(workout.muscle_group) AS muscle_group, 
-                    ROUND(COUNT(workout.muscle_group)::DECIMAL / 
-                        (SELECT COUNT(*) 
-                        FROM user_workout_item 
-                        WHERE user_id = :user_id), 3) AS percentage
-                FROM user_workout_item
-                JOIN workout ON user_workout_item.workout_id = workout.workout_id
-                WHERE user_id = :user_id
-                GROUP BY muscle_group
-                """
-            ),
-            {"id": user_id, "user_id": user_id},
-        ).fetchall()
-        if not query:
-            raise HTTPException(
-                status_code=404,
-                detail=f"No workout data found for user with ID {user_id}.",
-            )
+    query = conn.execute(
+        sqlalchemy.text(
+            """
+            SELECT 
+                LOWER(workout.muscle_group) AS muscle_group, 
+                ROUND(COUNT(workout.muscle_group)::DECIMAL / 
+                    (SELECT COUNT(*) 
+                    FROM user_workout_item 
+                    WHERE user_id = :user_id), 3) AS percentage
+            FROM user_workout_item
+            JOIN workout ON user_workout_item.workout_id = workout.workout_id
+            WHERE user_id = :user_id
+            GROUP BY muscle_group
+            """
+        ),
+        {"id": user_id, "user_id": user_id},
+    ).fetchall()
+    if not query:
+        raise HTTPException(
+            status_code=404,
+            detail=f"No workout data found for user with ID {user_id}.",
+        )
     return JSONResponse(content=[{name: val} for name, val in query], status_code=200)
