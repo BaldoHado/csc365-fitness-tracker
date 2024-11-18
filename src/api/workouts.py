@@ -18,13 +18,25 @@ def get_workouts():
     """
     with db.engine.begin() as connection:
         workouts = connection.execute(
-            sqlalchemy.text("SELECT workout_name, muscle_group FROM workout")
+            sqlalchemy.text(
+                """
+                SELECT workout_id, workout_name, muscle_group_name, equipment_name
+                FROM workout
+                JOIN muscle_group ON workout.muscle_group_id = muscle_group.muscle_group_id
+                JOIN equipment ON equipment.equipment_id = workout.equipment_id
+                """
+            )
         ).fetchall()
         if not len(workouts):
             raise HTTPException(500, "Unknown Error")
         return [
-            {"name": name, "muscle_group": muscle_group}
-            for name, muscle_group in workouts
+            {
+                "workout_id": wk_id,
+                "workout_name": wk_name,
+                "muscle_group_name": mg_name,
+                "equipment_name": e_name,
+            }
+            for wk_id, wk_name, mg_name, e_name in workouts
         ]
 
 
@@ -93,11 +105,12 @@ def create_custom_workout(workout_name: str, muscle_group: str, equipment: str):
             if not equipment_exist
             else equipment_exist[0]
         )
-        connection.execute(
+        new_workout_id = connection.execute(
             sqlalchemy.text(
                 """
                 INSERT INTO workout (workout_name, muscle_group_id, equipment_id) 
                 VALUES (:workout_name, :muscle_id, :equipment_id)
+                RETURNING workout_id
                 """
             ),
             {
@@ -105,8 +118,8 @@ def create_custom_workout(workout_name: str, muscle_group: str, equipment: str):
                 "muscle_id": muscle_id,
                 "equipment_id": equipment_id,
             },
-        )
-    return Response(content="Custom workout created.", status_code=201)
+        ).first()[0]
+    return {"workout_id": new_workout_id}
 
 
 @router.get("/search/")
@@ -147,6 +160,11 @@ def find_workout(
         if not query:
             raise HTTPException(404, "Workout not found")
         return [
-            {"workout_id": wrk_id,"workout_name": wrk_name, "muscle_group": mg_name, "equipment": e_name}
+            {
+                "workout_id": wrk_id,
+                "workout_name": wrk_name,
+                "muscle_group": mg_name,
+                "equipment": e_name,
+            }
             for wrk_id, wrk_name, mg_name, e_name in query
         ]
