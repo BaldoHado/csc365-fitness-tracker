@@ -167,6 +167,8 @@ def find_workout(
         ),
         present_args,
     ).fetchall()
+    if not query:
+        raise HTTPException(status_code=404, detail="Workout not found")
     return JSONResponse(
         content=[
             {

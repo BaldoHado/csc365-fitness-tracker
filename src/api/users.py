@@ -55,9 +55,7 @@ def update_user_workout(
     """
     Updates a workout in a user's account.
     """
-    valid_workout = workouts.find_workout(workout_id, conn=connection)
-    if not valid_workout:
-        raise HTTPException(status_code=404, detail="Workout not found")
+    workouts.find_workout(workout_id, conn=connection)
 
     update_data = {}
     if sets:
@@ -101,9 +99,7 @@ def post_workout_to_user(
     """
     Adds a new workout to a user's account.
     """
-    valid_workout = workouts.find_workout(workout_id, conn=connection)
-    if not valid_workout:
-        raise HTTPException(status_code=404, detail="Workout not found")
+    workouts.find_workout(workout_id, conn=connection)
 
     connection.execute(
         sqlalchemy.text(
