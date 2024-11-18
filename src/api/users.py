@@ -128,14 +128,13 @@ def post_workout_to_user(
 @router.get("/{user_id}/workouts")
 def get_workouts_from_user(
     user_id: PositiveInt,
-    workout_name: str = None,
+    workout_id: PositiveInt = None,
     connection: sqlalchemy.Connection = Depends(db.get_db_connection),
-) -> List[utils.NamedWorkoutItem]:
+) -> List[utils.WorkoutItem]:
     """
     Returns workouts from a user's account. If a workout_name is specified,
     returns info about the specific workout.
     """
-    workout_filter_clause = "AND LOWER(workout_name) = LOWER(:workout_name)"
     workouts_db = connection.execute(
         sqlalchemy.text(
             f"""
@@ -147,10 +146,10 @@ def get_workouts_from_user(
                 u.one_rep_max
             FROM user_workout_item u
             JOIN workout ON workout.workout_id = u.workout_id
-            WHERE user_id = :user_id {workout_filter_clause if workout_name else ''}
+            WHERE user_id = :user_id {"AND u.workout_id = :workout_id" if workout_id else ''}
             """
         ),
-        {"user_id": user_id, "workout_name": workout_name},
+        {"user_id": user_id, "workout_id": workout_id},
     ).fetchall()
 
     if not workouts_db:
@@ -160,7 +159,7 @@ def get_workouts_from_user(
         )
     return JSONResponse(
         content=[
-            utils.NamedWorkoutItem(
+            utils.WorkoutItem(
                 workout_name=workout_name,
                 sets=sets,
                 reps=reps,
@@ -177,24 +176,21 @@ def get_workouts_from_user(
 @router.delete("/{user_id}/workouts")
 def delete_workout_from_user(
     user_id: PositiveInt,
-    workout_name: str,
+    workout_id: PositiveInt,
     connection: sqlalchemy.Connection = Depends(db.get_db_connection),
 ):
     """
     Deletes a workout from a user's account.
     """
-    get_workouts_from_user(user_id, workout_name, connection=connection)
+    get_workouts_from_user(user_id, workout_id, connection=connection)
     connection.execute(
         sqlalchemy.text(
             """
             DELETE FROM user_workout_item
-            WHERE user_id = :user_id  AND workout_id IN (
-            SELECT workout.workout_id
-            FROM workout
-            WHERE workout.workout_name = :workout_name)
+            WHERE user_id = :user_id  AND workout_id = :workout_id
             """
         ),
-        {"user_id": user_id, "workout_name": workout_name},
+        {"user_id": user_id, "workout_id": workout_id},
     )
 
     return Response(content="Workout deleted succesfully.", status_code=200)

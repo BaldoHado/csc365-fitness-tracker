@@ -152,7 +152,9 @@ def find_workout(
         raise HTTPException(400, "Pick a filter.")
     where_clause = ""
     for filter_name in present_args.keys():
-        where_clause += f'{(" AND " if where_clause else "")} LOWER({filter_name}) = LOWER(:{filter_name})'
+        where_clause += (
+            f'{(" AND " if where_clause else "")} {filter_name} = :{filter_name}'
+        )
     query = conn.execute(
         sqlalchemy.text(
             f"""
