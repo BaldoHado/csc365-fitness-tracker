@@ -1,4 +1,4 @@
-from typing import List, Literal, TypedDict
+from typing_extensions import List, Literal, TypedDict
 
 FitnessGoal = Literal["strength", "muscle_growth", "endurance"]
 
