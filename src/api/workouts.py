@@ -135,7 +135,7 @@ def find_workout(
         query = conn.execute(
             sqlalchemy.text(
                 f"""
-                SELECT workout_name, muscle_group.muscle_group_name, equipment.equipment_name
+                SELECT workout_id, workout_name, muscle_group.muscle_group_name, equipment.equipment_name
                 FROM workout
                 JOIN muscle_group ON muscle_group.muscle_group_id = workout.muscle_group_id
                 JOIN equipment ON equipment.equipment_id = workout.equipment_id
@@ -147,6 +147,6 @@ def find_workout(
         if not query:
             raise HTTPException(404, "Workout not found")
         return [
-            {"workout_name": wrk_name, "muscle_group": mg_name, "equipment": e_name}
-            for wrk_name, mg_name, e_name in query
+            {"workout_id": wrk_id,"workout_name": wrk_name, "muscle_group": mg_name, "equipment": e_name}
+            for wrk_id, wrk_name, mg_name, e_name in query
         ]
