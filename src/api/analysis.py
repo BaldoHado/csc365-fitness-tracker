@@ -31,7 +31,6 @@ def get_workout_tips(
         users.get_workouts_from_user(user_id, connection=conn).body.decode("utf-8")
     )
 
-    print(workout_items)
     response = {}
     for workout_item in workout_items:
         response[workout_item["workout_name"]] = {
@@ -44,11 +43,6 @@ def get_workout_tips(
                 workout_item["rest_time"], fitness_goal
             ),
         }
-    if not response:
-        raise HTTPException(
-            status_code=404,
-            detail=f"No workout data found for user with ID {user_id}.",
-        )
 
     return JSONResponse(content=response, status_code=200)
 
@@ -79,10 +73,7 @@ def workout_distribution(
         ),
         {"id": user_id, "user_id": user_id},
     ).fetchall()
-    if not query:
-        raise HTTPException(
-            status_code=404,
-            detail=f"No workout data found for user with ID {user_id}.",
-        )
-    print(query)
-    return JSONResponse(content=[{name: float(val)} for name, val in query], status_code=200)
+
+    return JSONResponse(
+        content=[{name: float(val)} for name, val in query], status_code=200
+    )

@@ -41,6 +41,54 @@ def post_user(
     return JSONResponse(content={"user_id": insert_query[0]}, status_code=201)
 
 
+@router.get("/search/")
+def find_user(
+    user_id: PositiveInt = None,
+    first_name: str = None,
+    last_name: str = None,
+    conn: sqlalchemy.Connection = Depends(db.get_db_connection),
+):
+    """
+    Finds a user given filter(s).
+    """
+    if not (
+        present_args := {
+            **({"user_id": user_id} if user_id else {}),
+            **({"first_name": first_name} if first_name else {}),
+            **({"last_name": last_name} if last_name else {}),
+        }
+    ):
+        raise HTTPException(400, "Pick a filter.")
+    where_clause = ""
+    for filter_name in present_args.keys():
+        where_clause += (
+            f'{(" AND " if where_clause else "")} {filter_name} = :{filter_name}'
+        )
+    query = conn.execute(
+        sqlalchemy.text(
+            f"""
+            SELECT user_id, first_name, last_name
+            FROM users
+            WHERE {where_clause}
+            """
+        ),
+        present_args,
+    ).fetchall()
+    if not query:
+        raise HTTPException(status_code=404, detail="User not found")
+    return JSONResponse(
+        content=[
+            {
+                "user_id": u_id,
+                "first_name": f_name,
+                "last_name": l_name,
+            }
+            for u_id, f_name, l_name in query
+        ],
+        status_code=200,
+    )
+
+
 @router.put("/{user_id}/workouts/{workout_id}")
 def update_user_workout(
     user_id: PositiveInt,
@@ -55,6 +103,7 @@ def update_user_workout(
     """
     Updates a workout in a user's account.
     """
+    find_user(user_id)
     workouts.find_workout(workout_id, conn=connection)
 
     update_data = {}
@@ -99,6 +148,7 @@ def post_workout_to_user(
     """
     Adds a new workout to a user's account.
     """
+    find_user(user_id)
     workouts.find_workout(workout_id, conn=connection)
 
     connection.execute(
@@ -131,6 +181,7 @@ def get_workouts_from_user(
     Returns workouts from a user's account. If a workout_name is specified,
     returns info about the specific workout.
     """
+    find_user(user_id)
     workouts_db = connection.execute(
         sqlalchemy.text(
             f"""
@@ -178,6 +229,7 @@ def delete_workout_from_user(
     """
     Deletes a workout from a user's account.
     """
+    find_user(user_id)
     get_workouts_from_user(user_id, workout_id, connection=connection)
     connection.execute(
         sqlalchemy.text(
