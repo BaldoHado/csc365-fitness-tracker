@@ -152,7 +152,8 @@ Response:
 ```
 
 ### Get Workout Tips - /analysis/{user_id}/tips/{fitness_goal} (GET)
-Retrieves workout tips based on user's fitness goal.
+This is a Complex Endpoint that retrieves workout tips based on user's fitness goal.
+It analyzes detailed user workout data against fitness goals using advanced logic and helper functions. It also handles edge cases where no data is there. 
 
 Parameters:
 - user_id: str (path parameter)
@@ -171,7 +172,8 @@ Response:
 ```
 
 ### Get Workout Distribution - /analysis/{user_id}/distribution/ (POST)
-Analyzes the distribution of workouts for a user.
+This is a complex endpoint that analyzes the distribution of workouts for a user.
+It calculates and aggregates workout distribution percentages across muscle groups using SQL joins and other functions. It also handles edge cases where no data is there. 
 
 Parameters:
 - user_id: str (path parameter)
