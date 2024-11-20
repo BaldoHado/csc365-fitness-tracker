@@ -32,3 +32,6 @@ T1 encounters an error and rolls back the transaction.
 T2 has already used the new, invalid data, causing inconsistencies. 
 
 The Solution is to use the Read Committed isolation level to ensure that T2 can only access the committed data. One way to do this is to use the sql: SET transaction isolation level read committed;
+
+
+![image](https://github.com/user-attachments/assets/4353f9d4-f383-462b-a5ba-e3539ede0a4b)
