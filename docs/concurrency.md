@@ -7,6 +7,7 @@ T2 calls on the same endpoint and also performs a select to check if their worko
 Both queries result in the data not existing so two rows are inserted into the database with the same data
 
 One potential solution is to use the FOR UPDATE keyword in sql which locks rows from being accessed until the lock is released
+![image](https://github.com/user-attachments/assets/69765e17-9d18-4260-ad50-f0f43cdd6610)
 
 ### Lost Update
 
@@ -17,6 +18,7 @@ T2 calls PUT  /{user_id}/workouts/{workout_id} to update the same workout in the
 The queries conflict, and one query overrides the other’s changes, resulting in a lost update.
 
 The solution is to use the serializable isolation level, as it ensures that transactions executed concurrently will have the same result as if they were processed separately. 
+![image](https://github.com/user-attachments/assets/cd65155d-e4f9-4692-b744-1740ba0d9949)
 
 
 ### Dirty Read
