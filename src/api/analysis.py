@@ -4,6 +4,7 @@ from src.api import auth, users
 import sqlalchemy
 from src import database as db
 from src.utils import analysis_utils, utils
+from src.api import users
 from typing import List, Dict
 from pydantic import PositiveInt
 import json
@@ -27,6 +28,7 @@ def get_workout_tips(
     Analyzes the sets, reps, weights, and rest time of each workout
     given a fitness goal.
     """
+    users.find_user(user_id, conn=conn)
     workout_items = json.loads(
         users.get_workouts_from_user(user_id, connection=conn).body.decode("utf-8")
     )
@@ -55,6 +57,7 @@ def workout_distribution(
     Calculates the percent of workouts per muscle group
     for a given user.
     """
+    users.find_user(user_id, conn=conn)
     query = conn.execute(
         sqlalchemy.text(
             """
