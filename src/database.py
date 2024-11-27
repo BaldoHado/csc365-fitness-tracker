@@ -2,7 +2,6 @@ import os
 import dotenv
 from sqlalchemy import create_engine
 import sqlalchemy
-from typing import Generator
 
 
 def database_connection_url():
