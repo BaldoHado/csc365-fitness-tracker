@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
 from src.api import auth, users
 import sqlalchemy
@@ -17,7 +17,7 @@ router = APIRouter(
 )
 
 
-@router.get("/users/{user_id}/tips/{fitness_goal}")
+@router.get("/users/{user_id}/tips/{fitness_goal}", status_code=200)
 def get_workout_tips(
     user_id: PositiveInt,
     fitness_goal: utils.FitnessGoal,
@@ -30,7 +30,9 @@ def get_workout_tips(
     """
     users.find_user(user_id, connection=connection)
     workout_items = json.loads(
-        users.get_workouts_from_user(user_id, connection=connection).body.decode("utf-8")
+        users.get_workouts_from_user(user_id, connection=connection).body.decode(
+            "utf-8"
+        )
     )
 
     response = {}
@@ -49,9 +51,10 @@ def get_workout_tips(
     return JSONResponse(content=response, status_code=200)
 
 
-@router.get("/users/{user_id}/distributions/")
+@router.get("/users/{user_id}/distributions/", status_code=200)
 def workout_distribution(
-    user_id: PositiveInt, connection: sqlalchemy.Connection = Depends(db.get_db_connection)
+    user_id: PositiveInt,
+    connection: sqlalchemy.Connection = Depends(db.get_db_connection),
 ) -> List[Dict[str, float]]:
     """
     Calculates the percent of workouts per muscle group

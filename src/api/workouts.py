@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi.responses import Response, JSONResponse
+from fastapi.responses import JSONResponse
 from src.api import auth
 import sqlalchemy
 from src import database as db
@@ -13,7 +13,7 @@ router = APIRouter(
 )
 
 
-@router.get("/")
+@router.get("/", status_code=200)
 def get_workouts(connection: sqlalchemy.Connection = Depends(db.get_db_connection)):
     """
     Gets all workouts in the database.
@@ -44,7 +44,7 @@ def get_workouts(connection: sqlalchemy.Connection = Depends(db.get_db_connectio
     )
 
 
-@router.post("/{workout_name}")
+@router.post("/{workout_name}", status_code=201)
 def create_custom_workout(
     workout_name: str,
     muscle_group: str,
@@ -130,7 +130,7 @@ def create_custom_workout(
     return JSONResponse({"workout_id": new_workout_id}, 201)
 
 
-@router.get("/search/")
+@router.get("/search/", status_code=200)
 def find_workout(
     workout_id: PositiveInt = None,
     workout_name: str = None,

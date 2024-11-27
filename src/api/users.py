@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi.responses import Response, JSONResponse
+from fastapi.responses import JSONResponse
 from src.api import auth
 import sqlalchemy
 from src import database as db
@@ -15,7 +15,7 @@ router = APIRouter(
 )
 
 
-@router.post("/")
+@router.post("/", status_code=201)
 def post_user(
     first_name: str,
     last_name: str,
@@ -41,7 +41,7 @@ def post_user(
     return JSONResponse(content={"user_id": insert_query[0]}, status_code=201)
 
 
-@router.get("/search/")
+@router.get("/search/", status_code=200)
 def find_user(
     user_id: PositiveInt = None,
     first_name: str = None,
@@ -92,7 +92,7 @@ def find_user(
     )
 
 
-@router.put("/{user_id}/workouts/{workout_id}")
+@router.put("/{user_id}/workouts/{workout_id}", status_code=200)
 def update_user_workout(
     user_id: PositiveInt,
     workout_id: PositiveInt,
@@ -134,10 +134,12 @@ def update_user_workout(
         ),
         update_data,
     )
-    return Response(content="Workout updated successfully.", status_code=200)
+    return JSONResponse(
+        content={"message": "Workout updated successfully."}, status_code=200
+    )
 
 
-@router.post("/{user_id}/workouts/{workout_name}")
+@router.post("/{user_id}/workouts/{workout_name}", status_code=201)
 def post_workout_to_user(
     user_id: PositiveInt,
     workout_id: PositiveInt,
@@ -171,10 +173,12 @@ def post_workout_to_user(
             "one_rep_max": one_rep_max,
         },
     )
-    return Response(content="Workout added to user successfully.", status_code=201)
+    return JSONResponse(
+        content={"message": "Workout added to user successfully."}, status_code=201
+    )
 
 
-@router.get("/{user_id}/workouts")
+@router.get("/{user_id}/workouts", status_code=200)
 def get_workouts_from_user(
     user_id: PositiveInt,
     workout_id: PositiveInt = None,
@@ -223,7 +227,7 @@ def get_workouts_from_user(
     )
 
 
-@router.delete("/{user_id}/workouts")
+@router.delete("/{user_id}/workouts", status_code=200)
 def delete_workout_from_user(
     user_id: PositiveInt,
     workout_id: PositiveInt,
@@ -244,4 +248,6 @@ def delete_workout_from_user(
         {"user_id": user_id, "workout_id": workout_id},
     )
 
-    return Response(content="Workout deleted succesfully.", status_code=200)
+    return JSONResponse(
+        content={"message": "Workout deleted succesfully."}, status_code=200
+    )
