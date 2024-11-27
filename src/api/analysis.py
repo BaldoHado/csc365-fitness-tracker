@@ -21,16 +21,16 @@ router = APIRouter(
 def get_workout_tips(
     user_id: PositiveInt,
     fitness_goal: utils.FitnessGoal,
-    conn: sqlalchemy.Connection = Depends(db.get_db_connection),
+    connection: sqlalchemy.Connection = Depends(db.get_db_connection),
 ) -> Dict[str, Dict[str, utils.AnalysisTip]]:
     """
     Returns tips for the workouts of a given user.
     Analyzes the sets, reps, weights, and rest time of each workout
     given a fitness goal.
     """
-    users.find_user(user_id, conn=conn)
+    users.find_user(user_id, connection=connection)
     workout_items = json.loads(
-        users.get_workouts_from_user(user_id, connection=conn).body.decode("utf-8")
+        users.get_workouts_from_user(user_id, connection=connection).body.decode("utf-8")
     )
 
     response = {}
@@ -51,14 +51,14 @@ def get_workout_tips(
 
 @router.get("/users/{user_id}/distributions/")
 def workout_distribution(
-    user_id: PositiveInt, conn: sqlalchemy.Connection = Depends(db.get_db_connection)
+    user_id: PositiveInt, connection: sqlalchemy.Connection = Depends(db.get_db_connection)
 ) -> List[Dict[str, float]]:
     """
     Calculates the percent of workouts per muscle group
     for a given user.
     """
-    users.find_user(user_id, conn=conn)
-    query = conn.execute(
+    users.find_user(user_id, connection=connection)
+    query = connection.execute(
         sqlalchemy.text(
             """
             SELECT 
@@ -74,7 +74,7 @@ def workout_distribution(
             GROUP BY muscle_group
             """
         ),
-        {"id": user_id, "user_id": user_id},
+        {"user_id": user_id},
     ).fetchall()
 
     return JSONResponse(

@@ -46,7 +46,7 @@ def find_user(
     user_id: PositiveInt = None,
     first_name: str = None,
     last_name: str = None,
-    conn: sqlalchemy.Connection = Depends(db.get_db_connection),
+    connection: sqlalchemy.Connection = Depends(db.get_db_connection),
 ):
     """
     Finds a user given filter(s).
@@ -64,7 +64,7 @@ def find_user(
         where_clause += (
             f'{(" AND " if where_clause else "")} {filter_name} = :{filter_name}'
         )
-    query = conn.execute(
+    query = connection.execute(
         sqlalchemy.text(
             f"""
             SELECT user_id, first_name, last_name
@@ -103,8 +103,8 @@ def update_user_workout(
     """
     Updates a workout in a user's account.
     """
-    find_user(user_id)
-    workouts.find_workout(workout_id, conn=connection)
+    find_user(user_id, connection=connection)
+    workouts.find_workout(workout_id, connection=connection)
 
     update_data = {}
     if sets:
@@ -148,8 +148,8 @@ def post_workout_to_user(
     """
     Adds a new workout to a user's account.
     """
-    find_user(user_id)
-    workouts.find_workout(workout_id, conn=connection)
+    find_user(user_id, connection=connection)
+    workouts.find_workout(workout_id, connection=connection)
 
     connection.execute(
         sqlalchemy.text(
@@ -181,7 +181,7 @@ def get_workouts_from_user(
     Returns workouts from a user's account. If a workout_name is specified,
     returns info about the specific workout.
     """
-    find_user(user_id)
+    find_user(user_id, connection=connection)
     workouts_db = connection.execute(
         sqlalchemy.text(
             f"""
@@ -229,7 +229,7 @@ def delete_workout_from_user(
     """
     Deletes a workout from a user's account.
     """
-    find_user(user_id)
+    find_user(user_id, connection=connection)
     get_workouts_from_user(user_id, workout_id, connection=connection)
     connection.execute(
         sqlalchemy.text(

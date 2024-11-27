@@ -1,6 +1,8 @@
 import os
 import dotenv
 from sqlalchemy import create_engine
+import sqlalchemy
+from typing import Generator
 
 
 def database_connection_url():
@@ -12,6 +14,6 @@ def database_connection_url():
 engine = create_engine(database_connection_url(), pool_pre_ping=True)
 
 
-def get_db_connection():
+def get_db_connection() -> sqlalchemy.Connection:
     with engine.begin() as connection:
         yield connection

@@ -136,7 +136,7 @@ def find_workout(
     workout_name: str = None,
     muscle_group_name: str = None,
     equipment_name: str = None,
-    conn: sqlalchemy.Connection = Depends(db.get_db_connection),
+    connection: sqlalchemy.Connection = Depends(db.get_db_connection),
 ):
     """
     Finds a workout given filter(s).
@@ -155,7 +155,7 @@ def find_workout(
         where_clause += (
             f'{(" AND " if where_clause else "")} {filter_name} = :{filter_name}'
         )
-    query = conn.execute(
+    query = connection.execute(
         sqlalchemy.text(
             f"""
             SELECT workout_id, workout_name, muscle_group.muscle_group_name, equipment.equipment_name
