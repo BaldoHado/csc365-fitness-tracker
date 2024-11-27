@@ -16,7 +16,7 @@ router = APIRouter(
 @router.get("/")
 def get_workouts(connection: sqlalchemy.Connection = Depends(db.get_db_connection)):
     """
-    Gets all workouts in our database.
+    Gets all workouts in the database.
     """
     workouts = connection.execute(
         sqlalchemy.text(
@@ -52,7 +52,7 @@ def create_custom_workout(
     connection: sqlalchemy.Connection = Depends(db.get_db_connection),
 ):
     """
-    Adds a custom workout to our database.
+    Adds a custom workout to the database.
     """
     workout_exist = connection.execute(
         sqlalchemy.text(
@@ -80,9 +80,9 @@ def create_custom_workout(
         connection.execute(
             sqlalchemy.text(
                 """
-            INSERT INTO muscle_group (muscle_group_name)
-            VALUES (:muscle_group) RETURNING muscle_group_id
-            """
+                INSERT INTO muscle_group (muscle_group_name)
+                VALUES (:muscle_group) RETURNING muscle_group_id
+                """
             ),
             {"muscle_group": muscle_group},
         ).first()[0]
@@ -155,11 +155,9 @@ def find_workout(
         if filter_name == "workout_id":
             where_clause += (
                 f'{(" AND " if where_clause else "")} {filter_name} = :{filter_name}'
-            ) 
-        else:
-            where_clause += (
-                f'{(" AND " if where_clause else "")} LOWER({filter_name}) = LOWER(:{filter_name})'
             )
+        else:
+            where_clause += f'{(" AND " if where_clause else "")} LOWER({filter_name}) = LOWER(:{filter_name})'
     query = connection.execute(
         sqlalchemy.text(
             f"""
