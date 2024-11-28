@@ -5,7 +5,7 @@ import sqlalchemy
 from src import database as db
 from src.utils import analysis_utils, utils
 from src.api import users
-from typing import List, Dict
+from typing import List, Dict, Union
 from pydantic import PositiveInt
 import json
 
@@ -22,7 +22,7 @@ def get_workout_tips(
     user_id: PositiveInt,
     fitness_goal: utils.FitnessGoal,
     connection: sqlalchemy.Connection = Depends(db.get_db_connection),
-) -> Dict[str, Dict[str, utils.AnalysisTip]]:
+) -> Dict[str, Union[Dict[str, utils.AnalysisTip], str]]:
     """
     Returns tips for the workouts of a given user.
     Analyzes the sets, reps, weights, and rest time of each workout
@@ -34,7 +34,6 @@ def get_workout_tips(
             "utf-8"
         )
     )
-
     response = {}
     for workout_item in workout_items:
         response[workout_item["workout_name"]] = {
@@ -48,7 +47,21 @@ def get_workout_tips(
             ),
         }
 
-    return JSONResponse(content=response, status_code=200)
+    return JSONResponse(
+        content={
+            "summary": (
+                "When training for strength, focus on lifting as heavy as you can safely manage for a few powerful reps. Take longer rest periods to fully recover between sets and maintain maximum effort. Prioritize progressive overload and proper form to steadily build strength."
+                if fitness_goal == "strength"
+                else (
+                    "When training for muscle growth, focus on moderate to heavy resistance and aim to push your muscles to near fatigue with controlled reps. Keep rest periods moderate to sustain intensity and build muscle. Consistency, progressive overload, and a mix of compound and isolation exercises are key."
+                    if fitness_goal == "muscle_growth"
+                    else "When training for endurance, focus on light to moderate resistance and aim to maximize your reps while maintaining proper form. Keep rest periods short to sustain effort and build stamina. Prioritize steady, controlled movements and consistency to enhance muscular and cardiovascular endurance."
+                )
+            ),
+            "your_workouts": response,
+        },
+        status_code=200,
+    )
 
 
 @router.get("/users/{user_id}/distributions/", status_code=200)

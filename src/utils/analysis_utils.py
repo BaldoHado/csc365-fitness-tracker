@@ -1,4 +1,3 @@
-from typing import List, Literal
 from src.utils import utils
     
 def analyze_sets(sets: int, fitness_goal: str) -> utils.AnalysisTip:
