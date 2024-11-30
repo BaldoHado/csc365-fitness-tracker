@@ -24,6 +24,9 @@ def post_user(
     """
     Inserts a new user into the database.
     Returns the user's id.
+
+    Planning Time: 0.025 ms
+    Execution Time: 1.088 ms
     """
     insert_query = connection.execute(
         sqlalchemy.text(
@@ -50,6 +53,14 @@ def find_user(
 ):
     """
     Finds a user given filter(s).
+
+    If user exists:
+    Planning Time: 0.082 ms
+    Execution Time: 0.033 ms
+
+    If user is not in database:
+    Planning Time: 1.560 ms
+    Execution Time: 0.066 ms
     """
     if not (
         present_args := {
@@ -105,6 +116,9 @@ def update_user_workout(
 ):
     """
     Updates a workout in a user's account.
+
+    Planning Time: 0.168 ms
+    Execution Time: 5.591 ms
     """
     find_user(user_id, connection=connection)
     workouts.find_workout(workout_id, connection=connection)
@@ -134,6 +148,7 @@ def update_user_workout(
         ),
         update_data,
     )
+ 
     return JSONResponse(
         content={"message": "Workout updated successfully."}, status_code=200
     )
@@ -152,6 +167,9 @@ def post_workout_to_user(
 ):
     """
     Adds a new workout to a user's account.
+
+    Planning Time: .029 ms
+    Execution Time: 2.123 ms
     """
     find_user(user_id, connection=connection)
     workouts.find_workout(workout_id, connection=connection)
@@ -173,6 +191,7 @@ def post_workout_to_user(
             "one_rep_max": one_rep_max,
         },
     )
+   
     return JSONResponse(
         content={"message": "Workout added to user successfully."}, status_code=201
     )
@@ -187,6 +206,9 @@ def get_workouts_from_user(
     """
     Returns workouts from a user's account. If a workout_name is specified,
     returns info about the specific workout.
+
+    Planning Time: 0.457 ms
+    Execution Time: 0.093 ms
     """
     find_user(user_id, connection=connection)
     workouts_db = connection.execute(
@@ -235,6 +257,9 @@ def delete_workout_from_user(
 ):
     """
     Deletes a workout from a user's account.
+
+    Planning Time: 0.080 ms
+    Execution Time: 0.121 ms
     """
     find_user(user_id, connection=connection)
     get_workouts_from_user(user_id, workout_id, connection=connection)

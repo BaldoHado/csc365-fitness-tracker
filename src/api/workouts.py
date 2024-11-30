@@ -4,6 +4,7 @@ from src.api import auth
 import sqlalchemy
 from src import database as db
 from pydantic import PositiveInt
+import time
 
 
 router = APIRouter(
@@ -17,6 +18,9 @@ router = APIRouter(
 def get_workouts(connection: sqlalchemy.Connection = Depends(db.get_db_connection)):
     """
     Gets all workouts in the database.
+
+    Planning Time: 2.567 ms
+    Execution Time: 1.323 ms
     """
     workouts = connection.execute(
         sqlalchemy.text(
@@ -53,6 +57,9 @@ def create_custom_workout(
 ):
     """
     Adds a custom workout to the database.
+
+    Execution time: 2.801
+    Planning time: 1.943
     """
     workout_exist = connection.execute(
         sqlalchemy.text(
@@ -64,8 +71,10 @@ def create_custom_workout(
         ),
         {"workout_name": workout_name},
     ).fetchall()
+
     if len(workout_exist):
         raise HTTPException(409, "Workout name already exists")
+    
     muscle_exist = connection.execute(
         sqlalchemy.text(
             """
@@ -88,7 +97,9 @@ def create_custom_workout(
         ).first()[0]
         if not muscle_exist
         else muscle_exist[0]
+     
     )
+    
     equipment_exist = connection.execute(
         sqlalchemy.text(
             """
@@ -99,6 +110,7 @@ def create_custom_workout(
         ),
         {"equipment_name": equipment},
     ).first()
+
     equipment_id = (
         connection.execute(
             sqlalchemy.text(
@@ -112,7 +124,10 @@ def create_custom_workout(
         ).first()[0]
         if not equipment_exist
         else equipment_exist[0]
+       
     )
+
+  
     new_workout_id = connection.execute(
         sqlalchemy.text(
             """
@@ -140,6 +155,10 @@ def find_workout(
 ):
     """
     Finds a workout given filter(s).
+
+    Planning Time: 0.191 ms
+    Execution Time: 0.078 ms
+
     """
     if not (
         present_args := {

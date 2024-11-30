@@ -8,7 +8,7 @@ from src.api import users
 from typing import List, Dict, Union
 from pydantic import PositiveInt
 import json
-
+import time
 
 router = APIRouter(
     prefix="/analysis",
@@ -27,7 +27,10 @@ def get_workout_tips(
     Returns tips for the workouts of a given user.
     Analyzes the sets, reps, weights, and rest time of each workout
     given a fitness goal.
+
+    Time to execute: .126 ms
     """
+    start = time.time()
     users.find_user(user_id, connection=connection)
     workout_items = json.loads(
         users.get_workouts_from_user(user_id, connection=connection).body.decode(
@@ -47,6 +50,8 @@ def get_workout_tips(
             ),
         }
 
+    end = time.time()
+    print("DURATION:  ", (end-start)*1000)
     return JSONResponse(
         content={
             "summary": (
@@ -72,6 +77,9 @@ def workout_distribution(
     """
     Calculates the percent of workouts per muscle group
     for a given user.
+
+    Planning Time: 0.605 ms
+    Execution Time: 5.943 ms
     """
     users.find_user(user_id, connection=connection)
     query = connection.execute(
