@@ -6,7 +6,7 @@ After using the app for a few weeks, Chris decides to try some new exercises. To
 
 # Testing Results
 
-1. Accessing Personal Account Workouts - /users/{user_id}/workouts (GET)
+1. Accessing Personal Account Workouts - /users/{user_id}/workouts/ (GET)
 
 Curl Command:
 
@@ -138,7 +138,7 @@ Response:
 ]
 ```
 
-3. Create Weighted Lunges as a Custom Workout - /workouts/{workout_name} (POST)
+3. Create Weighted Lunges as a Custom Workout - /workouts/{workout_name}/ (POST)
 
 Curl Command:
 
@@ -158,7 +158,7 @@ Response:
 }
 ```
 
-4. Add Weighted Lunges to User Workouts - /users/{user_id}/workouts (POST)
+4. Add Weighted Lunges to User Workouts - /users/{user_id}/workouts/ (POST)
 
 Curl Command:
 
@@ -186,7 +186,7 @@ Chris introduces his friend Ozcar to the app, and Ozcar is excited to start trac
 
 # Testing Results
 
-1. Add a New User - /users/{first_name}/{last_name} (POST)
+1. Add a New User - /users/ (POST)
 
 Curl Command:
 
@@ -206,7 +206,7 @@ Response:
 }
 ```
 
-2. Get Workouts - /workouts (GET)
+2. Get Workouts - /workouts/ (GET)
 
 Curl Command:
 
@@ -237,7 +237,7 @@ Response:
 ]
 ```
 
-3. Add Workouts for Oscar - /users/{user_id}/workouts/{workout_id} (POST)
+3. Add Workouts for Oscar - /users/{user_id}/workouts/{workout_id}/ (POST)
 
 Curl Command:
 
@@ -257,7 +257,7 @@ Response:
 }
 ```
 
-4. Get Analysis Based On Strength Fitness Goal - /analysis/{user_id}/tips/{fitness_goal} (GET)
+4. Get Analysis Based On Strength Fitness Goal - /analysis/users/{user_id}/tips/{fitness_goal}/ (GET)
 
 Curl Command:
 

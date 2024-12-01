@@ -6,7 +6,7 @@ As a college freshman, Chris is trying to break into weightlifting so he uses ou
 
 # Testing Results
 
-1. Create a New User - /users (POST)
+1. Create a New User - /users/ (POST)
 
 Curl Command:
 
@@ -26,7 +26,7 @@ Response:
 }
 ```
 
-2. Get Workouts - /workouts (GET)
+2. Get Workouts - /workouts/ (GET)
 
 Curl Command:
 
@@ -57,7 +57,7 @@ Response:
 ]
 ```
 
-3. Add Workouts for User - /users/{user_id}/workouts/{workout_id} (POST)
+3. Add Workouts for User - /users/{user_id}/workouts/{workout_id}/ (POST)
 
 Curl Command:
 
