@@ -154,7 +154,7 @@ def update_user_workout(
     )
 
 
-@router.post("/{user_id}/workouts/{workout_name}", status_code=201)
+@router.post("/{user_id}/workouts/{workout_id}", status_code=201)
 def post_workout_to_user(
     user_id: PositiveInt,
     workout_id: PositiveInt,
