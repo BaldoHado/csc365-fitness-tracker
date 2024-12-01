@@ -120,8 +120,7 @@ def update_user_workout(
     Planning Time: 0.168 ms
     Execution Time: 5.591 ms
     """
-    find_user(user_id, connection=connection)
-    workouts.find_workout(workout_id, connection=connection)
+    get_workouts_from_user(user_id, workout_id, connection)
 
     update_data = {}
     if sets:
@@ -172,28 +171,34 @@ def post_workout_to_user(
     Execution Time: 2.123 ms
     """
     find_user(user_id, connection=connection)
-    workouts.find_workout(workout_id, connection=connection)
+    workouts.find_workout(workout_id=workout_id, connection=connection)
+    try:
+        get_workouts_from_user(user_id, workout_id, connection)
+    except HTTPException:
+        connection.execute(
+            sqlalchemy.text(
+                """
+                INSERT INTO user_workout_item (user_id, workout_id, sets, reps, weight, rest_time, one_rep_max) 
+                VALUES (:user_id, :workout_id, :sets, :reps, :weight, :rest_time, :one_rep_max)
+                """
+            ),
+            {
+                "user_id": user_id,
+                "workout_id": workout_id,
+                "sets": sets,
+                "reps": reps,
+                "weight": weight,
+                "rest_time": rest_time,
+                "one_rep_max": one_rep_max,
+            },
+        )
 
-    connection.execute(
-        sqlalchemy.text(
-            """
-            INSERT INTO user_workout_item (user_id, workout_id, sets, reps, weight, rest_time, one_rep_max) 
-            VALUES (:user_id, :workout_id, :sets, :reps, :weight, :rest_time, :one_rep_max)
-            """
-        ),
-        {
-            "user_id": user_id,
-            "workout_id": workout_id,
-            "sets": sets,
-            "reps": reps,
-            "weight": weight,
-            "rest_time": rest_time,
-            "one_rep_max": one_rep_max,
-        },
-    )
-
-    return JSONResponse(
-        content={"message": "Workout added to user successfully."}, status_code=201
+        return JSONResponse(
+            content={"message": "Workout added to user successfully."}, status_code=201
+        )
+    raise HTTPException(
+        status_code=409,
+        detail=f"Workout already exists in user's account.",
     )
 
 
@@ -204,13 +209,15 @@ def get_workouts_from_user(
     connection: sqlalchemy.Connection = Depends(db.get_db_connection),
 ) -> List[utils.WorkoutItem]:
     """
-    Returns workouts from a user's account. If a workout_name is specified,
+    Returns workouts from a user's account. If a workout_id is specified,
     returns info about the specific workout.
 
     Planning Time: 0.457 ms
     Execution Time: 0.093 ms
     """
     find_user(user_id, connection=connection)
+    if workout_id:
+        workouts.find_workout(workout_id, connection=connection)
     workouts_db = connection.execute(
         sqlalchemy.text(
             f"""
@@ -232,7 +239,7 @@ def get_workouts_from_user(
     if not workouts_db:
         raise HTTPException(
             status_code=404,
-            detail=f"No workout data found for user with ID {user_id}.",
+            detail=f"No workouts found for user with ID {user_id}{f' and workout_id {workout_id}' if workout_id else ''}.",
         )
     return JSONResponse(
         content=[
@@ -263,7 +270,6 @@ def delete_workout_from_user(
     Planning Time: 0.080 ms
     Execution Time: 0.121 ms
     """
-    find_user(user_id, connection=connection)
     get_workouts_from_user(user_id, workout_id, connection=connection)
     connection.execute(
         sqlalchemy.text(
