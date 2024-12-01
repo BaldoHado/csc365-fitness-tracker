@@ -249,7 +249,7 @@ def get_workouts_from_user(
     )
 
 
-@router.delete("/{user_id}/workouts", status_code=200)
+@router.delete("/{user_id}/workouts/{workout_id}", status_code=200)
 def delete_workout_from_user(
     user_id: PositiveInt,
     workout_id: PositiveInt,
