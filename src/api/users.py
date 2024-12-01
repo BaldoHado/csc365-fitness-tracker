@@ -148,7 +148,7 @@ def update_user_workout(
         ),
         update_data,
     )
- 
+
     return JSONResponse(
         content={"message": "Workout updated successfully."}, status_code=200
     )
@@ -191,7 +191,7 @@ def post_workout_to_user(
             "one_rep_max": one_rep_max,
         },
     )
-   
+
     return JSONResponse(
         content={"message": "Workout added to user successfully."}, status_code=201
     )
@@ -214,7 +214,8 @@ def get_workouts_from_user(
     workouts_db = connection.execute(
         sqlalchemy.text(
             f"""
-            SELECT workout.workout_name,
+            SELECT workout.workout_id,
+                workout.workout_name,
                 u.sets,
                 u.reps,
                 u.weight,
@@ -236,6 +237,7 @@ def get_workouts_from_user(
     return JSONResponse(
         content=[
             utils.WorkoutItem(
+                workout_id=workout_id,
                 workout_name=workout_name,
                 sets=sets,
                 reps=reps,
@@ -243,7 +245,7 @@ def get_workouts_from_user(
                 rest_time=rest_time,
                 one_rep_max=one_rep_max,
             )
-            for workout_name, sets, reps, weight, rest_time, one_rep_max in workouts_db
+            for workout_id, workout_name, sets, reps, weight, rest_time, one_rep_max in workouts_db
         ],
         status_code=200,
     )
