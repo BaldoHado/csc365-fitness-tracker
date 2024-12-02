@@ -144,24 +144,27 @@ GROUP BY muscle_group
 
 This command has a planning time of 1.059 ms and an execution time of 5.682 ms. This means that without an index available, it takes the database 5.682 ms to run through all the rows in the table to find the muscle_group_name, yielding the following results: 
 
-('HashAggregate  (cost=53.41..53.91 rows=22 width=64) (actual time=5.558..5.574 rows=17 loops=1)',)
-('  Group Key: lower(muscle_group.muscle_group_name)',)
-('  Batches: 1  Memory Usage: 24kB',)
-('  InitPlan 1 (returns $0)',)
-('    ->  Aggregate  (cost=13.09..13.10 rows=1 width=8) (actual time=0.103..0.103 rows=1 loops=1)',)
-('          ->  Index Only Scan using idx_user_workout on user_workout_item user_workout_item_1  (cost=0.42..11.92 rows=468 width=0) (actual time=0.028..0.073 rows=471 loops=1)',)
-('                Index Cond: (user_id = 400)',)
-('                Heap Fetches: 0',)
-('  ->  Hash Join  (cost=19.26..37.98 rows=468 width=64) (actual time=4.854..5.339 ros=471 loops=1)',)
-('                    Buckets: 1024  Batches: 1  Memory Usage: 27kB',)
-('                    ->  Index Only Scan using idx_user_workout on user_workout_item  (cost=0.42..11.92 rows=468 width=8) (actual time=0.050..0.113 rows=471 loops=1)',) 
-('                          Index Cond: (user_id = 400)',)
-('                          Heap Fetches: 0',)
-('        ->  Hash  (cost=1.22..1.22 rows=22 width=40) (actual time=0.020..0.026 rows=22 loops=1)',)
-('              Buckets: 1024  Batches: 1  Memory Usage: 10kB',)
-('              ->  Seq Scan on muscle_group  (cost=0.00..1.22 rows=22 width=40) (actual time=0.011..0.019 rows=22 loops=1)',)
-('Planning Time: 1.059 ms',)
-('Execution Time: 5.682 ms',)
+| QUERY PLAN                                                                                                                                                                     |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| HashAggregate  (cost=53.41..53.91 rows=22 width=64) (actual time=2.220..2.229 rows=17 loops=1)                                                                                 |
+|   Group Key: lower(muscle_group.muscle_group_name)                                                                                                                             |
+|   Batches: 1  Memory Usage: 24kB                                                                                                                                               |
+|   InitPlan 1 (returns $0)                                                                                                                                                      |
+|     ->  Aggregate  (cost=13.09..13.10 rows=1 width=8) (actual time=0.091..0.092 rows=1 loops=1)                                                                                |
+|           ->  Index Only Scan using idx_user_workout on user_workout_item user_workout_item_1  (cost=0.42..11.92 rows=468 width=0) (actual time=0.018..0.063 rows=471 loops=1) |
+|                 Index Cond: (user_id = 400)                                                                                                                                     |
+|                 Heap Fetches: 0                                                                                                                                                |
+|   ->  Hash Join  (cost=19.26..37.98 rows=468 width=64) (actual time=1.554..1.999 rows=471 loops=1)                                                                             |
+|         Buckets: 1024  Batches: 1  Memory Usage: 27kB                                                                                                                          |
+|         ->  Index Only Scan using idx_user_workout on user_workout_item  (cost=0.42..11.92 rows=468 width=8) (actual time=0.038..0.097 rows=471 loops=1)                       |
+|               Index Cond: (user_id = 400)                                                                                                                                      |
+|               Heap Fetches: 0                                                                                                                                                  |
+|         ->  Hash  (cost=1.22..1.22 rows=22 width=40) (actual time=0.022..0.023 rows=22 loops=1)                                                                                |
+|               Buckets: 1024  Batches: 1  Memory Usage: 10kB                                                                                                                    |
+|               ->  Seq Scan on muscle_group  (cost=0.00..1.22 rows=22 width=40) (actual time=0.011..0.014 rows=22 loops=1)                                                      |
+| Planning Time: 1.276 ms                                                                                                                                                        |
+| Execution Time: 2.343 ms                                                                                                                                                       |
+
 
 
 I added the following indexes:
