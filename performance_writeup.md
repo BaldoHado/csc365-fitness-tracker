@@ -29,7 +29,7 @@ CREATE UNIQUE INDEX idx_user_workout ON user_workout_item (user_id, workout_id);
 
 After this I run explain analyze again from above and get
 
-### INSERT FIRST SUPABASE IMAGE HERE
+<img width="688" alt="1" src="https://github.com/user-attachments/assets/7cf1c542-9cb4-4c42-b4a1-c3656b2e9c78">
 
 
 
