@@ -1,6 +1,6 @@
 # Performance Tuning
 The following three endpoints had the slowest execution times:
-----
+
 
 ## 1). FOR update_user_workout ENDPOINT:
 
