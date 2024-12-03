@@ -1,4 +1,6 @@
 # Performance Tuning
+The following three endpoints had the slowest execution times:
+----
 
 ## 1). FOR update_user_workout ENDPOINT:
 
@@ -162,12 +164,12 @@ This command has a planning time of 1.059 ms and an execution time of 5.682 ms. 
 |         ->  Hash  (cost=1.22..1.22 rows=22 width=40) (actual time=0.022..0.023 rows=22 loops=1)                                                                                |
 |               Buckets: 1024  Batches: 1  Memory Usage: 10kB                                                                                                                    |
 |               ->  Seq Scan on muscle_group  (cost=0.00..1.22 rows=22 width=40) (actual time=0.011..0.014 rows=22 loops=1)                                                      |
-| Planning Time: 1.276 ms                                                                                                                                                        |
-| Execution Time: 2.343 ms                                                                                                                                                       |
+| Planning Time: 1.059 ms                                                                                                                                                        |
+| Execution Time: 5.682 ms                                                                                                                                                       |
 
 
 
-I added the following indexes:
+I added the following index:
 
 ```
 CREATE INDEX lower_muscle_group_name ON muscle_group (lower(muscle_group_name));
