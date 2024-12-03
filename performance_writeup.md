@@ -1,4 +1,26 @@
 # Fake Data Modeling 
+https://github.com/BaldoHado/csc365-fitness-tracker/blob/main/src/populate_db.py
+
+To populate our database, we added ~2000 users and assigned each user ~500 workouts.
+
+We ended up with approximately 
+
+2000 rows in Users
+
+500 rows in Workouts
+
+1 million rows in User workout item
+
+To ensure our API can handle a larger scale database, we designed our database to represent the worst case scenario, all users having all 500 workouts added to their account. This strategy reflects various uses of our fitness tracker and works well with unique user stories. 
+Examples include: 
+### 1. Fitness Trainers: 
+A fitness trainer with multiple clients is able to use our API as a guideline with constructing their clients workouts by setting a base number of sets, reps, and weights that work with most beginner clients. 
+### 2. Personalization: 
+Whether a user has mistakenly added all the workouts at once or intended to add all the workouts, the user can input their workout information to reference later. 
+As a user who likes to change a workout routine, they are able to utilize our API to refer back to their previous reps, sets, weight, and other information. 
+This is also represents long time users who has tried a variety of workouts can keep track of the information of each workout for reference.  
+
+By scaling to include the worst case, our API is able to handle users with any number of workouts added to their account. This ensures that our endpoints are capable of supporting a range of users needs and that our API is more robust. 
 
 # Performance Tuning
 The following three endpoints had the slowest execution times:
