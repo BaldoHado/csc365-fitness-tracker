@@ -74,7 +74,7 @@ def create_custom_workout(
 
     if len(workout_exist):
         raise HTTPException(409, "Workout name already exists")
-    
+
     muscle_exist = connection.execute(
         sqlalchemy.text(
             """
@@ -97,9 +97,8 @@ def create_custom_workout(
         ).first()[0]
         if not muscle_exist
         else muscle_exist[0]
-     
     )
-    
+
     equipment_exist = connection.execute(
         sqlalchemy.text(
             """
@@ -124,10 +123,8 @@ def create_custom_workout(
         ).first()[0]
         if not equipment_exist
         else equipment_exist[0]
-       
     )
 
-  
     new_workout_id = connection.execute(
         sqlalchemy.text(
             """
@@ -163,9 +160,13 @@ def find_workout(
     if not (
         present_args := {
             **({"workout_id": workout_id} if workout_id else {}),
-            **({"workout_name": workout_name} if workout_name else {}),
-            **({"muscle_group_name": muscle_group_name} if muscle_group_name else {}),
-            **({"equipment_name": equipment_name} if equipment_name else {}),
+            **({"workout_name": f"%{workout_name}%"} if workout_name else {}),
+            **(
+                {"muscle_group_name": (f"%{muscle_group_name}%")}
+                if muscle_group_name
+                else {}
+            ),
+            **({"equipment_name": f"%{equipment_name}%"} if equipment_name else {}),
         }
     ):
         raise HTTPException(400, "Pick a filter.")
@@ -176,7 +177,7 @@ def find_workout(
                 f'{(" AND " if where_clause else "")} {filter_name} = :{filter_name}'
             )
         else:
-            where_clause += f'{(" AND " if where_clause else "")} LOWER({filter_name}) = LOWER(:{filter_name})'
+            where_clause += f'{(" AND " if where_clause else "")} LOWER({filter_name}) LIKE LOWER(:{filter_name})'
     query = connection.execute(
         sqlalchemy.text(
             f"""
