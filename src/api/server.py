@@ -2,10 +2,10 @@ from fastapi import FastAPI
 from src.api import workouts, users, analysis
 from starlette.middleware.cors import CORSMiddleware
 
-description = "Fitness Tracker App for CSC 365"
+description = "Fitness Analyzer App for CSC 365"
 
 app = FastAPI(
-    title="Fitness-Tracker",
+    title="Fitness-Analyzer",
     description=description,
     version="0.0.1",
     terms_of_service="http://example.com/terms/",

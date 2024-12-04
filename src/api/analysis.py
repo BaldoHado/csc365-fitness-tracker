@@ -51,7 +51,7 @@ def get_workout_tips(
         }
 
     end = time.time()
-    print("DURATION:  ", (end-start)*1000)
+    print("DURATION:  ", (end - start) * 1000)
     return JSONResponse(
         content={
             "summary": (
