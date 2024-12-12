@@ -1,19 +1,16 @@
-Bob is new to fitness. He has an idea of what muscles he wants to target but doesn’t know how to. Our API will give him a list of exercises when he specifies what muscles he wants to target.
+As a user who is new to fitness, Bob has an idea of what muscles he wants to target but doesn’t know how to. By exploring our API, he can discover exercises for the various muscle groups.
 
-Jamal has some experience in the weight room but he has been doing the same exact workouts for the past 3 years!! He thinks it’s time to start hitting a new muscle workout to improve his muscle growth. He tells our API the exercises he’s been doing and our api suggests new workouts.
+As a user who has some experience in the weight room but has been doing the same workout, Jamal wants to expand his muscle workouts to improve his strength. He inserts his workout routine into our API and explores the workouts in our database to find new workouts. 
 
-Carlos is a dedicated weight training gym rat. He wants to track the calories burned during his lifting sets. He uses our super cool API to track the calories burned when he inputs exercises, sets, and weight of the weights used.
+As an experienced lifter, Carlos wants to optimize his workouts to the maximum. He wants an even split of the training he does in every muscle group. He calls our API and it gives him a muscle distribution analysis and he alters his workouts accordingly. 
 
-Sally is an olympian training for the next olympics. She has a feeling that there is a more efficient way to workout her muscles but she doesn’t know what that workout is. She asks our API about a more efficient way to workout and our API delivers. 
+As a new powerlifter, Sally wants to get an analysis on her workout based on her goal of developing pure strength. She inserts her workout routine, weight, sets, reps, and rest time into our app and receives an analysis on how she should change her workouts to maximize her strength goals.
 
 As a person who has trouble staying motivated enough to consistently go to the gym. I want to see that I’m making some kind of progress towards my fitness goals and not feel like I’m wasting my time and money at the gym. 
 
-John is white-collar worker who’s free time is extremely valuable. He wants to be able to keep track of his workouts on his days off. So that he can make the most of his very limited free time.
-
 As a person who doesn’t know much about how to accomplish their fitness goals. I want to be able to figure out where I'm going wrong. So I can accomplish my fitness goals.
 
-Charlie wants to train in order to become a professional athlete and wants to keep close track of his workouts and so that he can figure out how he can improve his training regimen.
-
+As a rising athlete, Charlie wants to train in order to become a professional athlete and wants to keep close track of his workouts and so that he can figure out how he can improve his training regimen.
 
 As a freshman who recently entered college, Chris is new to weightlifting and wants to find ways to optimize his workout with longer breaks or less weight, so that he can maximize his muscle growth. 
 As a novice weightlifter, Sean wants to better distribute his workouts to target different muscle groups, so that he develops a more balanced build. 
@@ -21,6 +18,10 @@ As a novice weightlifter, Sean wants to better distribute his workouts to target
 As a busy college student, Kevin often forgets which workouts he does for each muscle group and wants a way to plan his workouts for the week so that he can make the best use of his limited time at the gym. 
 
 As a professional football player, Leo wants to track his progress and history of the amount of weight he’s able to lift for each of the exercises he does regularly so that he knows if his time at the gym is meeting his goals.
+
+As a high school team coach, Mark wants to find new workouts to give to his athletes that target upper-body. He calls our search endpoint and finds workouts that work chest and shoulders.
+
+As a new athlete who simply wants to gain more stamina and endurance, James explores our API by inserting workouts into his account and calls our /tips/ endpoint with the endurance fitness goal to target his workouts for stamina. 
 
 
 Exceptions:
@@ -53,6 +54,26 @@ In this case, the app will return an error indicating that the weight must be a 
 
 In this case, the app will return an error indicating that the set number must be a positive integer. 
 
+- User inserts an invalid user id
+
+In this case, the app will return an error indicating that the user does not exist.
+
+- User adds a workout to their account that already exists
+
+In this case, the app returns a 409 conflict error because the workout already exists.
+
+- User tries to add an invalid workout to their account
+
+In this case, the app returns a 404 not found error to indicate that the workout does not exist.
+
 - User enters invalid reps
 
 In this case, the app will return an error indicating that the reps must be a positive integer. 
+
+- User inserts a very large number for their weight
+
+In this case, the app checks if the value is within the bounds of an 8-bit integer and returns an error if this is not the case.
+
+- User deletes a workout that does not exist in their account
+
+In this case, we return a 404 not found error because the workout is not present in the user's account.
